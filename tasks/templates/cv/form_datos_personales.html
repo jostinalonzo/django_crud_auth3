@@ -1,0 +1,302 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid py-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh;">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-10 offset-lg-1">
+                <!-- Header -->
+                <div class="mb-4">
+                    <h1 class="text-white mb-2">
+                        <i class="bi bi-person-circle"></i> Mis Datos Personales
+                    </h1>
+                    <p class="text-white-50">Actualiza tu información personal para tu hoja de vida</p>
+                </div>
+
+                <!-- Main Card -->
+                <div class="card shadow-lg border-0 rounded-4">
+                    <div class="card-body p-5">
+                        <form method="POST" enctype="multipart/form-data" id="formDatos">
+                            {% csrf_token %}
+                            
+                            {% if form.non_field_errors %}
+                                <div class="alert alert-danger alert-dismissible fade show rounded-3" role="alert">
+                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                    <strong>Error al guardar:</strong>
+                                    {% for error in form.non_field_errors %}
+                                        <p class="mb-0">{{ error }}</p>
+                                    {% endfor %}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            {% endif %}
+
+                            <!-- Foto de Perfil Section -->
+                            <div class="row mb-5">
+                                <div class="col-md-4 text-center">
+                                    <div class="position-relative d-inline-block">
+                                        <div id="fotoPreview" class="rounded-circle overflow-hidden shadow-lg" 
+                                             style="width: 180px; height: 180px; background: #f0f0f0; display: flex; align-items: center; justify-content: center;">
+                                            {% if form.instance.fotoperfil %}
+                                                <img src="{{ form.instance.fotoperfil.url }}" class="w-100 h-100 object-fit-cover" alt="Foto de perfil">
+                                            {% else %}
+                                                <i class="bi bi-person-fill text-secondary" style="font-size: 4rem;"></i>
+                                            {% endif %}
+                                        </div>
+                                        <label for="id_fotoperfil" class="position-absolute bottom-0 end-0 btn btn-sm btn-primary rounded-circle" 
+                                               style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                            <i class="bi bi-camera-fill"></i>
+                                        </label>
+                                        <div class="d-none">
+                                            {{ form.fotoperfil }}
+                                        </div>
+                                    </div>
+                                    {% if form.fotoperfil.errors %}
+                                        <div class="invalid-feedback d-block mt-2">
+                                            {% for error in form.fotoperfil.errors %}{{ error }}{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="col-md-8">
+                                    <h5 class="text-dark mb-4">Información Básica</h5>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label text-secondary fw-600">Nombres <span class="text-danger">*</span></label>
+                                            {{ form.nombres }}
+                                            {% if form.nombres.errors %}
+                                                <div class="invalid-feedback d-block small">
+                                                    {% for error in form.nombres.errors %}{{ error }}{% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label text-secondary fw-600">Apellidos <span class="text-danger">*</span></label>
+                                            {{ form.apellidos }}
+                                            {% if form.apellidos.errors %}
+                                                <div class="invalid-feedback d-block small">
+                                                    {% for error in form.apellidos.errors %}{{ error }}{% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label text-secondary fw-600">Número de Cédula <span class="text-danger">*</span></label>
+                                            {{ form.numerocedula }}
+                                            {% if form.numerocedula.errors %}
+                                                <div class="invalid-feedback d-block small">
+                                                    {% for error in form.numerocedula.errors %}{{ error }}{% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label text-secondary fw-600">Sexo</label>
+                                            {{ form.sexo }}
+                                            {% if form.sexo.errors %}
+                                                <div class="invalid-feedback d-block small">
+                                                    {% for error in form.sexo.errors %}{{ error }}{% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr class="my-5">
+
+                            <!-- Personal Details -->
+                            <h5 class="text-dark mb-4">
+                                <i class="bi bi-calendar-event me-2"></i>Datos Personales
+                            </h5>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-secondary fw-600">Fecha de Nacimiento</label>
+                                    {{ form.fechanacimiento }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-secondary fw-600">Lugar de Nacimiento</label>
+                                    {{ form.lugarnacimiento }}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-secondary fw-600">Nacionalidad</label>
+                                    {{ form.nacionalidad }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-secondary fw-600">Estado Civil</label>
+                                    {{ form.estadocivil }}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-secondary fw-600">Licencia de Conducir</label>
+                                    {{ form.licenciaconducir }}
+                                </div>
+                            </div>
+
+                            <hr class="my-5">
+
+                            <!-- Contact Information -->
+                            <h5 class="text-dark mb-4">
+                                <i class="bi bi-telephone me-2"></i>Información de Contacto
+                            </h5>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-secondary fw-600">Teléfono Convencional</label>
+                                    {{ form.telefonoconvencional }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-secondary fw-600">Teléfono Fijo</label>
+                                    {{ form.telefonofijo }}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-secondary fw-600">Dirección Domiciliaria</label>
+                                    {{ form.direcciondomiciliaria }}
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-secondary fw-600">Dirección de Trabajo</label>
+                                    {{ form.direcciontrabajo }}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-secondary fw-600">Sitio Web</label>
+                                    {{ form.sitioweb }}
+                                </div>
+                            </div>
+
+                            <hr class="my-5">
+
+                            <!-- Professional Profile -->
+                            <h5 class="text-dark mb-4">
+                                <i class="bi bi-briefcase me-2"></i>Perfil Profesional
+                            </h5>
+
+                            <div class="mb-3">
+                                <label class="form-label text-secondary fw-600">Descripción del Perfil</label>
+                                {{ form.descripcionperfil }}
+                                <small class="form-text text-muted d-block mt-2">Breve descripción sobre ti y tu experiencia profesional</small>
+                            </div>
+
+                            <!-- Status -->
+                            <div class="mb-4 form-check">
+                                <div class="form-check d-flex align-items-center p-3 bg-light rounded-3">
+                                    {{ form.perfilactivo }}
+                                    <label for="id_perfilactivo" class="form-check-label ms-2 mb-0">
+                                        <strong>Mi perfil está activo</strong>
+                                        <br>
+                                        <small class="text-muted">Desactiva tu perfil si no quieres que sea visible</small>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <hr class="my-5">
+
+                            <!-- Actions -->
+                            <div class="d-flex justify-content-between gap-3">
+                                <a href="{% url 'mi_hoja_vida' %}" class="btn btn-outline-secondary btn-lg rounded-3 px-5">
+                                    <i class="bi bi-arrow-left me-2"></i>Cancelar
+                                </a>
+                                <button type="submit" class="btn btn-primary btn-lg rounded-3 px-5">
+                                    <i class="bi bi-check-circle me-2"></i>Guardar Cambios
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control, .form-select {
+        border: 2px solid #e9ecef;
+        border-radius: 0.75rem;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+    }
+
+    .form-label {
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    textarea.form-control {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    .card {
+        border-radius: 1rem;
+    }
+
+    .btn {
+        border-radius: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .object-fit-cover {
+        object-fit: cover;
+    }
+
+    #fotoPreview {
+        transition: all 0.3s ease;
+    }
+
+    .invalid-feedback {
+        color: #dc3545;
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+    }
+
+    .text-white-50 {
+        color: rgba(255, 255, 255, 0.7);
+    }
+</style>
+
+<script>
+    // Preview image when selected
+    document.getElementById('id_fotoperfil').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const preview = document.getElementById('fotoPreview');
+                preview.innerHTML = '<img src="' + event.target.result + '" class="w-100 h-100 object-fit-cover" alt="Foto de perfil">';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+{% endblock %}

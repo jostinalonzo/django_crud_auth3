@@ -1,0 +1,346 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="min-vh-100" style="background: #f8f9fa;">
+    <div class="container-fluid py-5">
+        <div class="mb-4">
+            <a href="{% url 'admin_hojas_vida' %}" class="btn btn-outline-secondary btn-sm rounded-3">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+        </div>
+
+        <div class="row g-4">
+            <!-- Sidebar (Left) - Profile & Quick Info -->
+            <div class="col-lg-3">
+                <!-- Profile Card -->
+                <div class="card shadow-sm border-0 rounded-4 overflow-hidden sticky-top" style="top: 20px;">
+                    <!-- Header Background -->
+                    <div style="height: 80px; background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);"></div>
+                    
+                    <div class="card-body text-center p-4" style="margin-top: -40px; position: relative;">
+                        <!-- Profile Photo -->
+                        <div class="mb-3">
+                            {% if datos.fotoperfil %}
+                                <img src="{{ datos.fotoperfil.url }}" alt="Foto de Perfil" 
+                                     class="rounded-circle border-4 border-white shadow-sm" 
+                                     style="width: 120px; height: 120px; object-fit: cover;">
+                            {% else %}
+                                <div class="rounded-circle border-4 border-white shadow-sm mx-auto d-flex align-items-center justify-content-center" 
+                                     style="width: 120px; height: 120px; background: #e9ecef;">
+                                    <i class="bi bi-person-fill text-secondary" style="font-size: 3rem;"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Name -->
+                        <h3 class="fw-bold text-dark mb-1">{{ datos.nombres|upper }}</h3>
+                        <h4 class="fw-bold text-dark mb-2">{{ datos.apellidos|upper }}</h4>
+                        <p class="text-muted small mb-3">@{{ usuario.username }}</p>
+
+                        <!-- Edit Button -->
+                        <a href="{% url 'admin_editar_hoja_vida' usuario.id %}" class="btn btn-primary btn-sm rounded-3 w-100 mb-3">
+                            <i class="bi bi-pencil me-1"></i> Editar Datos
+                        </a>
+
+                        <a href="{% url 'admin_descargar_cv_pdf' usuario.id %}" class="btn btn-success btn-sm rounded-3 w-100 mb-3">
+                            <i class="bi bi-download me-1"></i> Descargar PDF
+                        </a>
+
+                        <hr class="my-4">
+
+                        <!-- Contact Section -->
+                        <div class="text-start">
+                            <h6 class="fw-bold text-dark mb-3">CONTACTO</h6>
+                            
+                            {% if usuario.email %}
+                            <div class="mb-2">
+                                <i class="bi bi-envelope text-danger"></i>
+                                <small class="d-block text-break">{{ usuario.email }}</small>
+                            </div>
+                            {% endif %}
+
+                            {% if datos.telefonoconvencional %}
+                            <div class="mb-2">
+                                <i class="bi bi-telephone text-danger"></i>
+                                <small class="d-block">{{ datos.telefonoconvencional }}</small>
+                            </div>
+                            {% endif %}
+
+                            {% if datos.telefonofijo %}
+                            <div class="mb-2">
+                                <i class="bi bi-telephone-fill text-danger"></i>
+                                <small class="d-block">{{ datos.telefonofijo }}</small>
+                            </div>
+                            {% endif %}
+
+                            {% if datos.sitioweb %}
+                            <div class="mb-2">
+                                <i class="bi bi-globe text-danger"></i>
+                                <small class="d-block">
+                                    <a href="{{ datos.sitioweb }}" target="_blank" class="text-decoration-none">
+                                        {{ datos.sitioweb }}
+                                    </a>
+                                </small>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <hr class="my-4">
+
+                        <!-- Personal Info -->
+                        <div class="text-start">
+                            <h6 class="fw-bold text-dark mb-3">INFORMACIÓN</h6>
+                            
+                            {% if datos.numerocedula %}
+                            <div class="mb-2">
+                                <small class="text-muted d-block">CÉDULA</small>
+                                <small class="fw-bold">{{ datos.numerocedula }}</small>
+                            </div>
+                            {% endif %}
+
+                            {% if datos.nacionalidad %}
+                            <div class="mb-2">
+                                <small class="text-muted d-block">NACIONALIDAD</small>
+                                <small class="fw-bold">{{ datos.nacionalidad }}</small>
+                            </div>
+                            {% endif %}
+
+                            {% if datos.fechanacimiento %}
+                            <div class="mb-2">
+                                <small class="text-muted d-block">NACIMIENTO</small>
+                                <small class="fw-bold">{{ datos.fechanacimiento|date:"d/m/Y" }}</small>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content (Right) -->
+            <div class="col-lg-9">
+                <!-- Experiencia Laboral -->
+                {% if experiencias %}
+                <div class="card shadow-sm border-0 rounded-4 mb-4">
+                    <div class="card-header bg-white border-0 pt-4 pb-0">
+                        <h5 class="fw-bold text-dark mb-0">
+                            <i class="bi bi-briefcase-fill me-2" style="color: #e74c3c;"></i>EXPERIENCIA PROFESIONAL
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="timeline">
+                            {% for exp in experiencias %}
+                                <div class="timeline-item mb-4">
+                                    <div class="d-flex">
+                                        <div class="me-3">
+                                            <div class="timeline-badge rounded-circle" 
+                                                 style="width: 14px; height: 14px; background: #e74c3c; margin-top: 4px;"></div>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h6 class="fw-bold mb-1">{{ exp.cargodesempenado }}</h6>
+                                            <p class="text-muted mb-1"><strong>{{ exp.nombreempresa }}</strong></p>
+                                            <small class="text-muted">
+                                                {{ exp.fechainiciogestion|date:"M Y" }}
+                                                {% if exp.fechafingestion %}
+                                                    - {{ exp.fechafingestion|date:"M Y" }}
+                                                {% else %}
+                                                    - Presente
+                                                {% endif %}
+                                            </small>
+                                            {% if exp.descripcionfunciones %}
+                                                <p class="small text-muted mb-0 mt-2">{{ exp.descripcionfunciones }}</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Cursos -->
+                {% if cursos %}
+                <div class="card shadow-sm border-0 rounded-4 mb-4">
+                    <div class="card-header bg-white border-0 pt-4 pb-0">
+                        <h5 class="fw-bold text-dark mb-0">
+                            <i class="bi bi-mortarboard-fill me-2" style="color: #e74c3c;"></i>FORMACIÓN Y CURSOS
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="timeline">
+                            {% for curso in cursos %}
+                                <div class="timeline-item mb-4">
+                                    <div class="d-flex">
+                                        <div class="me-3">
+                                            <div class="timeline-badge rounded-circle" 
+                                                 style="width: 14px; height: 14px; background: #e74c3c; margin-top: 4px;"></div>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h6 class="fw-bold mb-1">{{ curso.nombrecurso }}</h6>
+                                            <p class="text-muted mb-1"><strong>{{ curso.entidadpatrocinadora }}</strong></p>
+                                            <small class="text-muted">
+                                                {{ curso.fechainicio|date:"M Y" }}
+                                                {% if curso.fechafin %}
+                                                    - {{ curso.fechafin|date:"M Y" }}
+                                                {% endif %}
+                                                {% if curso.totalhoras %}
+                                                    • {{ curso.totalhoras }} horas
+                                                {% endif %}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Reconocimientos -->
+                {% if reconocimientos %}
+                <div class="card shadow-sm border-0 rounded-4 mb-4">
+                    <div class="card-header bg-white border-0 pt-4 pb-0">
+                        <h5 class="fw-bold text-dark mb-0">
+                            <i class="bi bi-award-fill me-2" style="color: #e74c3c;"></i>RECONOCIMIENTOS
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="timeline">
+                            {% for reco in reconocimientos %}
+                                <div class="timeline-item mb-4">
+                                    <div class="d-flex">
+                                        <div class="me-3">
+                                            <div class="timeline-badge rounded-circle" 
+                                                 style="width: 14px; height: 14px; background: #e74c3c; margin-top: 4px;"></div>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h6 class="fw-bold mb-1">{{ reco.get_tiporeconocimiento_display }}</h6>
+                                            <p class="text-muted mb-1"><strong>{{ reco.entidadpatrocinadora }}</strong></p>
+                                            <small class="text-muted">{{ reco.fechareconocimiento|date:"d M Y" }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Productos Académicos -->
+                {% if productos_academicos %}
+                <div class="card shadow-sm border-0 rounded-4 mb-4">
+                    <div class="card-header bg-white border-0 pt-4 pb-0">
+                        <h5 class="fw-bold text-dark mb-0">
+                            <i class="bi bi-files-alt me-2" style="color: #e74c3c;"></i>PRODUCTOS ACADÉMICOS
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            {% for prod in productos_academicos %}
+                                <div class="col-md-6">
+                                    <div class="border rounded-3 p-3">
+                                        <h6 class="fw-bold mb-1">{{ prod.nombrerecurso }}</h6>
+                                        <small class="text-muted">{{ prod.clasificador }}</small>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Productos Laborales -->
+                {% if productos_laborales %}
+                <div class="card shadow-sm border-0 rounded-4 mb-4">
+                    <div class="card-header bg-white border-0 pt-4 pb-0">
+                        <h5 class="fw-bold text-dark mb-0">
+                            <i class="bi bi-bag-check-fill me-2" style="color: #e74c3c;"></i>PRODUCTOS LABORALES
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            {% for prod in productos_laborales %}
+                                <div class="col-md-6">
+                                    <div class="border rounded-3 p-3">
+                                        <h6 class="fw-bold mb-1">{{ prod.nombreproducto }}</h6>
+                                        <small class="text-muted d-block">{{ prod.fechaproducto|date:"d M Y" }}</small>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Ventas -->
+                {% if ventas %}
+                <div class="card shadow-sm border-0 rounded-4 mb-4">
+                    <div class="card-header bg-white border-0 pt-4 pb-0">
+                        <h5 class="fw-bold text-dark mb-0">
+                            <i class="bi bi-shop me-2" style="color: #e74c3c;"></i>PRODUCTOS EN VENTA
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            {% for venta in ventas %}
+                                <div class="col-md-6">
+                                    <div class="border rounded-3 p-3">
+                                        <h6 class="fw-bold mb-1">{{ venta.nombreproducto }}</h6>
+                                        <small class="text-muted d-block">
+                                            <span class="badge bg-{% if venta.estadoproducto == 'Bueno' %}success{% elif venta.estadoproducto == 'Regular' %}warning{% else %}danger{% endif %}">
+                                                {{ venta.estadoproducto }}
+                                            </span>
+                                        </small>
+                                        <strong class="text-danger">${{ venta.valordelbien }}</strong>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .timeline {
+        position: relative;
+        padding: 0;
+    }
+
+    .timeline-item {
+        position: relative;
+    }
+
+    .timeline-item:not(:last-child)::before {
+        content: '';
+        position: absolute;
+        left: 6px;
+        top: 30px;
+        width: 2px;
+        height: calc(100% + 10px);
+        background: #e9ecef;
+    }
+
+    .timeline-badge {
+        flex-shrink: 0;
+    }
+
+    .card {
+        transition: all 0.3s ease;
+    }
+
+    .min-vh-100 {
+        min-height: 100vh;
+    }
+
+    @media (max-width: 991px) {
+        .sticky-top {
+            position: static;
+        }
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid py-5" style="background: #f8f9fa; min-height: 100vh;">
+    <div class="container-lg">
+        <!-- Header -->
+        <div class="mb-5">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h1 class="fw-bold text-dark mb-2">
+                        <i class="bi bi-file-earmark-person-fill me-2" style="color: #e74c3c;"></i>Administración de Hojas de Vida
+                    </h1>
+                    <p class="text-muted">Gestiona todas las hojas de vida del sistema</p>
+                </div>
+                <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm rounded-3">
+                    <i class="bi bi-arrow-left"></i> Volver
+                </a>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="row mb-5 g-3">
+            <div class="col-md-4">
+                <div class="card border-0 rounded-4 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="text-muted mb-2">TOTAL DE HOJAS</h6>
+                                <h3 class="fw-bold text-dark">{{ hojas_vida|length }}</h3>
+                            </div>
+                            <div class="rounded-circle" style="width: 50px; height: 50px; background: rgba(231, 76, 60, 0.1); display: flex; align-items: center; justify-content: center;">
+                                <i class="bi bi-file-earmark text-danger" style="font-size: 1.5rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 rounded-4 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="text-muted mb-2">PERFILES ACTIVOS</h6>
+                                <h3 class="fw-bold text-dark">
+                                    {{ hojas_vida|dictsort:"perfilactivo"|length }}
+                                </h3>
+                            </div>
+                            <div class="rounded-circle" style="width: 50px; height: 50px; background: rgba(46, 204, 113, 0.1); display: flex; align-items: center; justify-content: center;">
+                                <i class="bi bi-check-circle-fill text-success" style="font-size: 1.5rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 rounded-4 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="text-muted mb-2">ÚLTIMAS ACTUALIZACIONES</h6>
+                                <h6 class="fw-bold text-dark">Hoy</h6>
+                            </div>
+                            <div class="rounded-circle" style="width: 50px; height: 50px; background: rgba(52, 152, 219, 0.1); display: flex; align-items: center; justify-content: center;">
+                                <i class="bi bi-calendar-check-fill text-primary" style="font-size: 1.5rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="card border-0 rounded-4 shadow-sm">
+            <div class="card-body p-4">
+                {% if hojas_vida %}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="bg-light rounded-3">
+                                <tr>
+                                    <th class="fw-bold text-dark"><i class="bi bi-person-fill me-2"></i>Usuario</th>
+                                    <th class="fw-bold text-dark"><i class="bi bi-pencil-fill me-2"></i>Nombre Completo</th>
+                                    <th class="fw-bold text-dark"><i class="bi bi-credit-card me-2"></i>Cédula</th>
+                                    <th class="fw-bold text-dark"><i class="bi bi-toggle-on me-2"></i>Estado</th>
+                                    <th class="fw-bold text-dark"><i class="bi bi-calendar me-2"></i>Creación</th>
+                                    <th class="fw-bold text-dark text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for hoja in hojas_vida %}
+                                    <tr class="border-bottom">
+                                        <td>
+                                            <strong class="text-dark">{{ hoja.user.username }}</strong>
+                                        </td>
+                                        <td>
+                                            <span class="text-dark">{{ hoja.nombres }} {{ hoja.apellidos }}</span>
+                                        </td>
+                                        <td>
+                                            <code class="text-muted">{{ hoja.numerocedula }}</code>
+                                        </td>
+                                        <td>
+                                            {% if hoja.perfilactivo %}
+                                                <span class="badge bg-success rounded-pill">
+                                                    <i class="bi bi-check-circle me-1"></i>Activo
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-secondary rounded-pill">
+                                                    <i class="bi bi-x-circle me-1"></i>Inactivo
+                                                </span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <small class="text-muted">{{ hoja.fechacreacion|date:"d/m/Y" }}</small>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <a href="{% url 'admin_ver_hoja_vida' hoja.user.id %}" 
+                                                   class="btn btn-outline-primary rounded-2" title="Ver">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                                <a href="{% url 'admin_editar_hoja_vida' hoja.user.id %}" 
+                                                   class="btn btn-outline-warning rounded-2" title="Editar">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <a href="{% url 'admin_descargar_cv_pdf' hoja.user.id %}" 
+                                                   class="btn btn-outline-success rounded-2" title="Descargar">
+                                                    <i class="bi bi-download"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-inbox" style="font-size: 3rem; color: #bdc3c7;"></i>
+                        <p class="mt-3 text-muted">
+                            <strong>No hay hojas de vida registradas</strong><br>
+                            Los usuarios pueden crear sus hojas de vida desde su panel.
+                        </p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .btn-group-sm .btn {
+        padding: 0.4rem 0.6rem;
+    }
+
+    .btn-outline-primary:hover {
+        background: #3498db;
+        border-color: #3498db;
+    }
+
+    .btn-outline-warning:hover {
+        background: #f39c12;
+        border-color: #f39c12;
+    }
+
+    .btn-outline-success:hover {
+        background: #27ae60;
+        border-color: #27ae60;
+    }
+
+    .table tbody tr:hover {
+        background-color: rgba(0, 0, 0, 0.02);
+    }
+</style>
+{% endblock %}
