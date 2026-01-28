@@ -117,7 +117,7 @@ def crear_experiencia_laboral(request):
         return redirect('crear_datos_personales')
     
     if request.method == 'POST':
-        form = ExperienciaLaboralForm(request.POST, request.FILES)
+        form = ExperienciaLaboralForm(request.POST, request.FILES, datospersonales=datos)
         if form.is_valid():
             experiencia = form.save(commit=False)
             experiencia.datospersonales = datos
@@ -134,7 +134,7 @@ def crear_experiencia_laboral(request):
             messages.success(request, 'Experiencia laboral creada correctamente')
             return redirect('mi_hoja_vida')
     else:
-        form = ExperienciaLaboralForm()
+        form = ExperienciaLaboralForm(datospersonales=datos)
     
     context = {
         'form': form,
@@ -155,13 +155,13 @@ def editar_experiencia_laboral(request, id):
     )
     
     if request.method == 'POST':
-        form = ExperienciaLaboralForm(request.POST, request.FILES, instance=experiencia)
+        form = ExperienciaLaboralForm(request.POST, request.FILES, instance=experiencia, datospersonales=experiencia.datospersonales)
         if form.is_valid():
             form.save()
             messages.success(request, 'Experiencia laboral actualizada correctamente')
             return redirect('mi_hoja_vida')
     else:
-        form = ExperienciaLaboralForm(instance=experiencia)
+        form = ExperienciaLaboralForm(instance=experiencia, datospersonales=experiencia.datospersonales)
     
     context = {
         'form': form,
@@ -283,7 +283,7 @@ def crear_curso(request):
         return redirect('crear_datos_personales')
     
     if request.method == 'POST':
-        form = CursoRealizadoForm(request.POST, request.FILES)
+        form = CursoRealizadoForm(request.POST, request.FILES, datospersonales=datos)
         if form.is_valid():
             curso = form.save(commit=False)
             curso.datospersonales = datos
@@ -300,7 +300,7 @@ def crear_curso(request):
             messages.success(request, 'Curso creado correctamente')
             return redirect('mi_hoja_vida')
     else:
-        form = CursoRealizadoForm()
+        form = CursoRealizadoForm(datospersonales=datos)
     
     context = {
         'form': form,
@@ -321,13 +321,13 @@ def editar_curso(request, id):
     )
     
     if request.method == 'POST':
-        form = CursoRealizadoForm(request.POST, request.FILES, instance=curso)
+        form = CursoRealizadoForm(request.POST, request.FILES, instance=curso, datospersonales=curso.datospersonales)
         if form.is_valid():
             form.save()
             messages.success(request, 'Curso actualizado correctamente')
             return redirect('mi_hoja_vida')
     else:
-        form = CursoRealizadoForm(instance=curso)
+        form = CursoRealizadoForm(instance=curso, datospersonales=curso.datospersonales)
     
     context = {
         'form': form,

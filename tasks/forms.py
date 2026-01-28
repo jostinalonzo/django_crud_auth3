@@ -1,4 +1,6 @@
 from django import forms
+from django.core.exceptions import ValidationError
+from datetime import date
 from .models import (
     Task, DatosPersonales, ExperienciaLaboral, Reconocimiento,
     CursoRealizado, ProductoAcademico, ProductoLaboral, VentaGarage
@@ -103,10 +105,21 @@ class DatosPersonalesForm(forms.ModelForm):
                 'class': 'form-check-input'
             }),
         }
+    
+    def clean_fechanacimiento(self):
+        """Validar que la fecha de nacimiento no sea mayor a la fecha actual"""
+        fechanacimiento = self.cleaned_data.get('fechanacimiento')
+        if fechanacimiento and fechanacimiento > date.today():
+            raise ValidationError('La fecha de nacimiento no puede ser mayor a la fecha actual.')
+        return fechanacimiento
 
 
 class ExperienciaLaboralForm(forms.ModelForm):
     """Formulario para experiencia laboral"""
+    
+    def __init__(self, *args, **kwargs):
+        self.datospersonales = kwargs.pop('datospersonales', None)
+        super().__init__(*args, **kwargs)
     
     class Meta:
         model = ExperienciaLaboral
@@ -169,6 +182,48 @@ class ExperienciaLaboralForm(forms.ModelForm):
                 'class': 'form-check-input'
             }),
         }
+    
+    def clean_fechainiciogestion(self):
+        """Validar que la fecha de inicio no sea mayor a la fecha actual"""
+        fechainiciogestion = self.cleaned_data.get('fechainiciogestion')
+        if fechainiciogestion and fechainiciogestion > date.today():
+            raise ValidationError('La fecha de inicio no puede ser mayor a la fecha actual.')
+        return fechainiciogestion
+    
+    def clean_fechafingestion(self):
+        """Validar que la fecha de fin no sea mayor a la fecha actual"""
+        fechafingestion = self.cleaned_data.get('fechafingestion')
+        if fechafingestion and fechafingestion > date.today():
+            raise ValidationError('La fecha de fin no puede ser mayor a la fecha actual.')
+        return fechafingestion
+    
+    def clean(self):
+        """Validaciones adicionales que requieren comparar múltiples campos"""
+        cleaned_data = super().clean()
+        fechainiciogestion = cleaned_data.get('fechainiciogestion')
+        fechafingestion = cleaned_data.get('fechafingestion')
+        
+        # Obtener la fecha de nacimiento del usuario
+        fechanacimiento = None
+        if self.datospersonales and self.datospersonales.fechanacimiento:
+            fechanacimiento = self.datospersonales.fechanacimiento
+        elif hasattr(self, 'instance') and self.instance.pk and self.instance.datospersonales:
+            fechanacimiento = self.instance.datospersonales.fechanacimiento
+        
+        if fechanacimiento and fechainiciogestion:
+            if fechainiciogestion < fechanacimiento:
+                self.add_error('fechainiciogestion', 
+                             'La fecha de inicio no puede ser menor a su fecha de nacimiento.')
+        
+        # Validar que fecha inicio no sea mayor a fecha fin
+        if fechainiciogestion and fechafingestion:
+            if fechainiciogestion > fechafingestion:
+                self.add_error('fechainiciogestion', 
+                             'La fecha de inicio no puede ser mayor a la fecha de fin.')
+                self.add_error('fechafingestion', 
+                             'La fecha de fin no puede ser menor a la fecha de inicio.')
+        
+        return cleaned_data
 
 
 class ReconocimientoForm(forms.ModelForm):
@@ -217,10 +272,21 @@ class ReconocimientoForm(forms.ModelForm):
                 'class': 'form-check-input'
             }),
         }
+    
+    def clean_fechareconocimiento(self):
+        """Validar que la fecha de reconocimiento no sea mayor a la fecha actual"""
+        fechareconocimiento = self.cleaned_data.get('fechareconocimiento')
+        if fechareconocimiento and fechareconocimiento > date.today():
+            raise ValidationError('La fecha de reconocimiento no puede ser mayor a la fecha actual.')
+        return fechareconocimiento
 
 
 class CursoRealizadoForm(forms.ModelForm):
     """Formulario para cursos realizados"""
+    
+    def __init__(self, *args, **kwargs):
+        self.datospersonales = kwargs.pop('datospersonales', None)
+        super().__init__(*args, **kwargs)
     
     class Meta:
         model = CursoRealizado
@@ -279,9 +345,48 @@ class CursoRealizadoForm(forms.ModelForm):
                 'class': 'form-check-input'
             }),
         }
-
-
-class ProductoAcademicoForm(forms.ModelForm):
+    
+    def clean_fechainicio(self):
+        """Validar que la fecha de inicio no sea mayor a la fecha actual"""
+        fechainicio = self.cleaned_data.get('fechainicio')
+        if fechainicio and fechainicio > date.today():
+            raise ValidationError('La fecha de inicio no puede ser mayor a la fecha actual.')
+        return fechainicio
+    
+    def clean_fechafin(self):
+        """Validar que la fecha de fin no sea mayor a la fecha actual"""
+        fechafin = self.cleaned_data.get('fechafin')
+        if fechafin and fechafin > date.today():
+            raise ValidationError('La fecha de fin no puede ser mayor a la fecha actual.')
+        return fechafin
+    
+    def clean(self):
+        """Validaciones adicionales que requieren comparar múltiples campos"""
+        cleaned_data = super().clean()
+        fechainicio = cleaned_data.get('fechainicio')
+        fechafin = cleaned_data.get('fechafin')
+        
+        # Obtener la fecha de nacimiento del usuario
+        fechanacimiento = None
+        if self.datospersonales and self.datospersonales.fechanacimiento:
+            fechanacimiento = self.datospersonales.fechanacimiento
+        elif hasattr(self, 'instance') and self.instance.pk and self.instance.datospersonales:
+            fechanacimiento = self.instance.datospersonales.fechanacimiento
+        
+        if fechanacimiento and fechainicio:
+            if fechainicio < fechanacimiento:
+                self.add_error('fechainicio', 
+                             'La fecha de inicio no puede ser menor a su fecha de nacimiento.')
+        
+        # Validar que fecha inicio no sea mayor a fecha fin
+        if fechainicio and fechafin:
+            if fechainicio > fechafin:
+                self.add_error('fechainicio', 
+                             'La fecha de inicio no puede ser mayor a la fecha de fin.')
+                self.add_error('fechafin', 
+                             'La fecha de fin no puede ser menor a la fecha de inicio.')
+        
+        return cleaned_data
     """Formulario para productos académicos"""
     
     class Meta:

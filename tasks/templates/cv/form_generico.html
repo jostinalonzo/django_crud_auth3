@@ -155,4 +155,117 @@
         font-weight: 600;
     }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('formulario');
+    const hoy = new Date().toISOString().split('T')[0];
+    
+    // Obtener campos de fecha
+    const fechaNacimiento = document.querySelector('input[name="fechanacimiento"]');
+    const fechaInicio = document.querySelector('input[name="fechainiciogestion"], input[name="fechainicio"]');
+    const fechaFin = document.querySelector('input[name="fechafingestion"], input[name="fechafin"]');
+    const fechaReconocimiento = document.querySelector('input[name="fechareconocimiento"]');
+    
+    // Establecer límite máximo para fecha de nacimiento (no puede ser mayor a hoy)
+    if (fechaNacimiento) {
+        fechaNacimiento.max = hoy;
+    }
+    
+    // Establecer límite máximo para fecha de reconocimiento (no puede ser mayor a hoy)
+    if (fechaReconocimiento) {
+        fechaReconocimiento.max = hoy;
+    }
+    
+    // Configurar validaciones para experiencia laboral y cursos
+    if (fechaInicio) {
+        // No puede ser mayor a hoy
+        fechaInicio.max = hoy;
+        
+        // Validar al cambiar
+        fechaInicio.addEventListener('change', function() {
+            if (fechaFin && fechaFin.value) {
+                // La fecha de inicio no debe ser mayor a la fecha fin
+                if (this.value > fechaFin.value) {
+                    this.setCustomValidity('La fecha de inicio no puede ser mayor a la fecha de fin.');
+                } else {
+                    this.setCustomValidity('');
+                }
+            }
+        });
+    }
+    
+    if (fechaFin) {
+        // No puede ser mayor a hoy
+        fechaFin.max = hoy;
+        
+        // Validar al cambiar
+        fechaFin.addEventListener('change', function() {
+            if (fechaInicio && fechaInicio.value) {
+                // La fecha fin no debe ser menor a la fecha inicio
+                if (this.value < fechaInicio.value) {
+                    this.setCustomValidity('La fecha de fin no puede ser menor a la fecha de inicio.');
+                } else {
+                    this.setCustomValidity('');
+                    // Limpiar error de fecha inicio también
+                    if (fechaInicio) fechaInicio.setCustomValidity('');
+                }
+            }
+        });
+    }
+    
+    // Validación adicional en el submit
+    form.addEventListener('submit', function(e) {
+        let isValid = true;
+        
+        // Validar fecha de nacimiento
+        if (fechaNacimiento && fechaNacimiento.value) {
+            if (fechaNacimiento.value > hoy) {
+                alert('La fecha de nacimiento no puede ser mayor a la fecha actual.');
+                fechaNacimiento.focus();
+                e.preventDefault();
+                return false;
+            }
+        }
+        
+        // Validar fecha de reconocimiento
+        if (fechaReconocimiento && fechaReconocimiento.value) {
+            if (fechaReconocimiento.value > hoy) {
+                alert('La fecha de reconocimiento no puede ser mayor a la fecha actual.');
+                fechaReconocimiento.focus();
+                e.preventDefault();
+                return false;
+            }
+        }
+        
+        // Validar fechas de inicio y fin
+        if (fechaInicio && fechaInicio.value) {
+            if (fechaInicio.value > hoy) {
+                alert('La fecha de inicio no puede ser mayor a la fecha actual.');
+                fechaInicio.focus();
+                e.preventDefault();
+                return false;
+            }
+            
+            if (fechaFin && fechaFin.value) {
+                if (fechaInicio.value > fechaFin.value) {
+                    alert('La fecha de inicio no puede ser mayor a la fecha de fin.');
+                    fechaInicio.focus();
+                    e.preventDefault();
+                    return false;
+                }
+            }
+        }
+        
+        if (fechaFin && fechaFin.value) {
+            if (fechaFin.value > hoy) {
+                alert('La fecha de fin no puede ser mayor a la fecha actual.');
+                fechaFin.focus();
+                e.preventDefault();
+                return false;
+            }
+        }
+    });
+});
+</script>
 {% endblock %}
