@@ -387,6 +387,9 @@ class CursoRealizadoForm(forms.ModelForm):
                              'La fecha de fin no puede ser menor a la fecha de inicio.')
         
         return cleaned_data
+
+
+class ProductoAcademicoForm(forms.ModelForm):
     """Formulario para productos académicos"""
     
     class Meta:
