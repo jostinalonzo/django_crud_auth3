@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
             name='DatosPersonales',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('descripcionperfil', models.CharField(blank=True, max_length=50, null=True)),
+                ('descripcionperfil', models.CharField(blank=True, max_length=200, null=True)),
                 ('perfilactivo', models.BooleanField(default=True)),
                 ('apellidos', models.CharField(max_length=60)),
                 ('nombres', models.CharField(max_length=60)),
