@@ -889,7 +889,6 @@
                 {% endif %}
 
                 <!-- Productos Académicos -->
-                {% if productos_academicos %}
                 <div class="content-card">
                     <div class="card-header-custom">
                         <h5 class="card-title">
@@ -901,34 +900,39 @@
                         </a>
                     </div>
                     
-                    <div class="grid-container">
-                        {% for prod in productos_academicos %}
-                            <div class="grid-item">
-                                <div class="grid-item-header">
-                                    <h6 class="grid-item-title">{{ prod.nombreproducto }}</h6>
+                    {% if productos_academicos %}
+                        <div class="grid-container">
+                            {% for prod in productos_academicos %}
+                                <div class="grid-item">
+                                    <div class="grid-item-header">
+                                        <h6 class="grid-item-title">{{ prod.nombreproducto }}</h6>
+                                    </div>
+                                    <p class="grid-item-date">
+                                        <i class="bi bi-calendar me-1"></i>{{ prod.fechaproducto|date:"d M Y" }}
+                                    </p>
+                                    <div class="grid-item-actions">
+                                        <a href="{% url 'editar_producto_academico' prod.id %}" class="action-btn action-btn-edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form method="POST" action="{% url 'eliminar_producto_academico' prod.id %}" style="display:inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="action-btn action-btn-delete" onclick="return confirm('¿Eliminar?')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
-                                <p class="grid-item-date">
-                                    <i class="bi bi-calendar me-1"></i>{{ prod.fechaproducto|date:"d M Y" }}
-                                </p>
-                                <div class="grid-item-actions">
-                                    <a href="{% url 'editar_producto_academico' prod.id %}" class="action-btn action-btn-edit">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <form method="POST" action="{% url 'eliminar_producto_academico' prod.id %}" style="display:inline;">
-                                        {% csrf_token %}
-                                        <button type="submit" class="action-btn action-btn-delete" onclick="return confirm('¿Eliminar?')">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="no-data">
+                            <div class="no-data-icon"><i class="bi bi-journal"></i></div>
+                            <p>No hay productos académicos registrados. <a href="{% url 'crear_producto_academico' %}" style="color: #00f3ff;">Agregar uno</a></p>
+                        </div>
+                    {% endif %}
                 </div>
-                {% endif %}
 
                 <!-- Productos Laborales -->
-                {% if productos_laborales %}
                 <div class="content-card">
                     <div class="card-header-custom">
                         <h5 class="card-title">
@@ -940,34 +944,39 @@
                         </a>
                     </div>
                     
-                    <div class="grid-container">
-                        {% for prod in productos_laborales %}
-                            <div class="grid-item">
-                                <div class="grid-item-header">
-                                    <h6 class="grid-item-title">{{ prod.nombreproducto }}</h6>
+                    {% if productos_laborales %}
+                        <div class="grid-container">
+                            {% for prod in productos_laborales %}
+                                <div class="grid-item">
+                                    <div class="grid-item-header">
+                                        <h6 class="grid-item-title">{{ prod.nombreproducto }}</h6>
+                                    </div>
+                                    <p class="grid-item-date">
+                                        <i class="bi bi-calendar me-1"></i>{{ prod.fechaproducto|date:"d M Y" }}
+                                    </p>
+                                    <div class="grid-item-actions">
+                                        <a href="{% url 'editar_producto_laboral' prod.id %}" class="action-btn action-btn-edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form method="POST" action="{% url 'eliminar_producto_laboral' prod.id %}" style="display:inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="action-btn action-btn-delete" onclick="return confirm('¿Eliminar?')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
-                                <p class="grid-item-date">
-                                    <i class="bi bi-calendar me-1"></i>{{ prod.fechaproducto|date:"d M Y" }}
-                                </p>
-                                <div class="grid-item-actions">
-                                    <a href="{% url 'editar_producto_laboral' prod.id %}" class="action-btn action-btn-edit">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <form method="POST" action="{% url 'eliminar_producto_laboral' prod.id %}" style="display:inline;">
-                                        {% csrf_token %}
-                                        <button type="submit" class="action-btn action-btn-delete" onclick="return confirm('¿Eliminar?')">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="no-data">
+                            <div class="no-data-icon"><i class="bi bi-bag-check"></i></div>
+                            <p>No hay productos laborales registrados. <a href="{% url 'crear_producto_laboral' %}" style="color: #00f3ff;">Agregar uno</a></p>
+                        </div>
+                    {% endif %}
                 </div>
-                {% endif %}
 
                 <!-- Ventas -->
-                {% if ventas %}
                 <div class="content-card">
                     <div class="card-header-custom">
                         <h5 class="card-title">
@@ -979,34 +988,40 @@
                         </a>
                     </div>
                     
-                    <div class="grid-container">
-                        {% for venta in ventas %}
-                            <div class="grid-item">
-                                <div class="grid-item-header">
-                                    <h6 class="grid-item-title">{{ venta.nombreproducto }}</h6>
+                    {% if ventas %}
+                        <div class="grid-container">
+                            {% for venta in ventas %}
+                                <div class="grid-item">
+                                    <div class="grid-item-header">
+                                        <h6 class="grid-item-title">{{ venta.nombreproducto }}</h6>
+                                    </div>
+                                    <span class="badge-status {% if venta.estadoproducto == 'Bueno' %}badge-success{% elif venta.estadoproducto == 'Regular' %}badge-warning{% else %}badge-danger{% endif %}">
+                                        {{ venta.estadoproducto }}
+                                    </span>
+                                    <p class="grid-item-description" style="color: #00ff9f; font-weight: 700; font-size: 1.1rem;">
+                                        ${{ venta.valordelbien }}
+                                    </p>
+                                    <div class="grid-item-actions">
+                                        <a href="{% url 'editar_venta_garage' venta.id %}" class="action-btn action-btn-edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form method="POST" action="{% url 'eliminar_venta_garage' venta.id %}" style="display:inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="action-btn action-btn-delete" onclick="return confirm('¿Eliminar?')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
-                                <span class="badge-status {% if venta.estadoproducto == 'Bueno' %}badge-success{% elif venta.estadoproducto == 'Regular' %}badge-warning{% else %}badge-danger{% endif %}">
-                                    {{ venta.estadoproducto }}
-                                </span>
-                                <p class="grid-item-description" style="color: #00ff9f; font-weight: 700; font-size: 1.1rem;">
-                                    ${{ venta.valordelbien }}
-                                </p>
-                                <div class="grid-item-actions">
-                                    <a href="{% url 'editar_venta_garage' venta.id %}" class="action-btn action-btn-edit">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <form method="POST" action="{% url 'eliminar_venta_garage' venta.id %}" style="display:inline;">
-                                        {% csrf_token %}
-                                        <button type="submit" class="action-btn action-btn-delete" onclick="return confirm('¿Eliminar?')">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="no-data">
+                            <div class="no-data-icon"><i class="bi bi-shop"></i></div>
+                            <p>No hay productos en venta registrados. <a href="{% url 'crear_venta_garage' %}" style="color: #00f3ff;">Agregar uno</a></p>
+                        </div>
+                    {% endif %}
                 </div>
-                {% endif %}
             </div>
         </div>
     </div>
