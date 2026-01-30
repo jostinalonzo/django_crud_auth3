@@ -1,18 +1,236 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <main class="container-">
+<style>
+    .create-task-container {
+        min-height: 90vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 0;
+    }
+
+    .form-card {
+        background: rgba(26, 31, 58, 0.8);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(0, 243, 255, 0.3);
+        border-radius: 20px;
+        padding: 3rem;
+        box-shadow: 0 8px 32px rgba(0, 243, 255, 0.2);
+        position: relative;
+        overflow: hidden;
+        max-width: 600px;
+        width: 100%;
+    }
+
+    .form-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, 
+            transparent, 
+            rgba(0, 243, 255, 0.03), 
+            transparent);
+        animation: rotate-bg 10s linear infinite;
+    }
+
+    @keyframes rotate-bg {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .form-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: linear-gradient(45deg, #00f3ff, #00ff9f);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 2rem;
+        text-align: center;
+        letter-spacing: 2px;
+    }
+
+    .form-control, 
+    .form-select {
+        background: rgba(10, 14, 39, 0.6);
+        border: 1px solid rgba(0, 243, 255, 0.3);
+        color: #e0e0e0;
+        padding: 0.8rem 1rem;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+    textarea.form-control {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        background: rgba(10, 14, 39, 0.8);
+        border-color: #00f3ff;
+        box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+        color: #fff;
+        outline: none;
+    }
+
+    .form-label {
+        color: #00f3ff;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 1px;
+    }
+
+    .form-check-input {
+        background: rgba(10, 14, 39, 0.6);
+        border: 2px solid rgba(0, 243, 255, 0.3);
+        width: 1.5rem;
+        height: 1.5rem;
+        cursor: pointer;
+    }
+
+    .form-check-input:checked {
+        background-color: #00f3ff;
+        border-color: #00f3ff;
+        box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
+    }
+
+    .form-check-input:focus {
+        box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+    }
+
+    .form-check-label {
+        color: #e0e0e0;
+        margin-left: 0.5rem;
+        cursor: pointer;
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1.1rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        border: 2px solid #00ff9f;
+        background: transparent;
+        color: #00ff9f;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        margin-top: 1.5rem;
+    }
+
+    .submit-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(0, 255, 159, 0.3), transparent);
+        transition: left 0.5s;
+    }
+
+    .submit-btn:hover {
+        background: #00ff9f;
+        color: #0a0e27;
+        box-shadow: 0 0 30px rgba(0, 255, 159, 0.6);
+        transform: translateY(-2px);
+    }
+
+    .submit-btn:hover::before {
+        left: 100%;
+    }
+
+    .error-message {
+        background: rgba(255, 0, 110, 0.1);
+        border: 1px solid #ff006e;
+        border-radius: 10px;
+        padding: 1rem;
+        color: #ff006e;
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Style for Django form fields */
+    p {
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    p label {
+        color: #00f3ff;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 1px;
+        display: block;
+    }
+
+    p input[type="text"],
+    p textarea {
+        background: rgba(10, 14, 39, 0.6);
+        border: 1px solid rgba(0, 243, 255, 0.3);
+        color: #e0e0e0;
+        padding: 0.8rem 1rem;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+
+    p input[type="checkbox"] {
+        background: rgba(10, 14, 39, 0.6);
+        border: 2px solid rgba(0, 243, 255, 0.3);
+        width: 1.5rem;
+        height: 1.5rem;
+        cursor: pointer;
+        margin-right: 0.5rem;
+    }
+
+    @media (max-width: 576px) {
+        .form-card {
+            padding: 2rem;
+        }
+        
+        .form-title {
+            font-size: 2rem;
+        }
+    }
+</style>
+
+<main class="create-task-container">
+    <div class="container">
         <div class="row">
-            <div class="col-md-4 offset-md-4 mt-5">
-                <form action="/tasks/create/" method="POST" class="card card-body">
-                    <h1>Create task</h1>
-                    {{error}}
+            <div class="col-12 d-flex justify-content-center">
+                <form action="/tasks/create/" method="POST" class="form-card">
+                    <h1 class="form-title">
+                        <i class="bi bi-plus-circle me-2"></i>CREAR TAREA
+                    </h1>
+                    
+                    {% if error %}
+                    <div class="error-message">
+                        <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+                    </div>
+                    {% endif %}
+                    
                     {% csrf_token %}
-                    {{form.as_p}}
-                    <button class="btn btn-primary">Save</button>
+                    {{ form.as_p }}
+                    
+                    <button class="submit-btn">
+                        <i class="bi bi-save me-2"></i>Guardar Tarea
+                    </button>
                 </form>
             </div>
         </div>
-    </main>
+    </div>
+</main>
 {% endblock %}
-

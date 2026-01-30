@@ -2,525 +2,909 @@
 {% load static %}
 
 {% block content %}
-<div class="min-vh-100" style="background: #f8f9fa;">
-    <div class="container-fluid py-5">
-        <div class="mb-4">
-            <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm">
-                <i class="bi bi-arrow-left"></i> Volver
-            </a>
-        </div>
+<style>
+    .cv-container {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+        padding: 2rem 0;
+    }
+
+    .back-btn {
+        background: rgba(26, 31, 58, 0.8);
+        border: 1px solid rgba(0, 243, 255, 0.3);
+        color: #00f3ff;
+        padding: 0.5rem 1.5rem;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        margin-bottom: 2rem;
+    }
+
+    .back-btn:hover {
+        background: rgba(0, 243, 255, 0.1);
+        box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+        transform: translateX(-5px);
+        color: #00f3ff;
+    }
+
+    /* Profile Sidebar */
+    .profile-card {
+        background: rgba(26, 31, 58, 0.9);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(0, 243, 255, 0.3);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(0, 243, 255, 0.2);
+        position: sticky;
+        top: 100px;
+    }
+
+    .profile-header {
+        height: 120px;
+        background: linear-gradient(135deg, #00f3ff 0%, #bf00ff 100%);
+        position: relative;
+    }
+
+    .profile-photo-wrapper {
+        margin-top: -60px;
+        text-align: center;
+        position: relative;
+        z-index: 2;
+        padding: 0 2rem;
+    }
+
+    .profile-photo {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        border: 5px solid rgba(26, 31, 58, 0.9);
+        object-fit: cover;
+        box-shadow: 0 0 30px rgba(0, 243, 255, 0.5);
+    }
+
+    .profile-photo-placeholder {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        border: 5px solid rgba(26, 31, 58, 0.9);
+        background: rgba(10, 14, 39, 0.8);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 30px rgba(0, 243, 255, 0.5);
+    }
+
+    .profile-body {
+        padding: 1.5rem 2rem 2rem;
+    }
+
+    .profile-name {
+        font-size: 1.5rem;
+        font-weight: 800;
+        background: linear-gradient(45deg, #00f3ff, #00ff9f);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-align: center;
+        margin-bottom: 0.5rem;
+        letter-spacing: 1px;
+    }
+
+    .profile-description {
+        color: #a0a0a0;
+        text-align: center;
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+    }
+
+    .edit-profile-btn {
+        width: 100%;
+        padding: 0.8rem;
+        background: transparent;
+        border: 2px solid #00f3ff;
+        color: #00f3ff;
+        border-radius: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        margin-bottom: 1.5rem;
+        text-decoration: none;
+        display: block;
+        text-align: center;
+    }
+
+    .edit-profile-btn:hover {
+        background: #00f3ff;
+        color: #0a0e27;
+        box-shadow: 0 0 20px rgba(0, 243, 255, 0.5);
+    }
+
+    .section-divider {
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.3), transparent);
+        margin: 1.5rem 0;
+    }
+
+    .section-title-small {
+        color: #00f3ff;
+        font-size: 0.9rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        margin-bottom: 1rem;
+    }
+
+    .contact-item, .info-item {
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: start;
+        gap: 0.5rem;
+    }
+
+    .contact-icon, .info-icon {
+        color: #00f3ff;
+        margin-top: 2px;
+        flex-shrink: 0;
+    }
+
+    .contact-text, .info-text {
+        color: #a0a0a0;
+        font-size: 0.85rem;
+        word-break: break-word;
+    }
+
+    .info-label {
+        color: #666;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .info-value {
+        color: #e0e0e0;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    /* Main Content Cards */
+    .content-card {
+        background: rgba(26, 31, 58, 0.8);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(0, 243, 255, 0.2);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .content-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #00f3ff, #bf00ff);
+    }
+
+    .card-header-custom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .card-title {
+        font-size: 1.5rem;
+        font-weight: 800;
+        background: linear-gradient(45deg, #00f3ff, #00ff9f);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0;
+    }
+
+    .add-btn {
+        padding: 0.5rem 1rem;
+        background: transparent;
+        border: 1px solid #00f3ff;
+        color: #00f3ff;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .add-btn:hover {
+        background: rgba(0, 243, 255, 0.1);
+        box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+        color: #00f3ff;
+    }
+
+    .pdf-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        margin-bottom: 2rem;
+    }
+
+    .pdf-btn {
+        padding: 0.7rem 1.5rem;
+        background: linear-gradient(45deg, #00f3ff, #bf00ff);
+        border: none;
+        color: #fff;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 243, 255, 0.3);
+    }
+
+    .pdf-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 25px rgba(0, 243, 255, 0.5);
+        color: #fff;
+    }
+
+    /* Timeline */
+    .timeline-item {
+        position: relative;
+        padding-left: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: 6px;
+        top: 20px;
+        width: 2px;
+        height: calc(100% - 20px);
+        background: linear-gradient(180deg, rgba(0, 243, 255, 0.5), transparent);
+    }
+
+    .timeline-item:last-child::before {
+        display: none;
+    }
+
+    .timeline-dot {
+        position: absolute;
+        left: 0;
+        top: 5px;
+        width: 14px;
+        height: 14px;
+        background: #00f3ff;
+        border-radius: 50%;
+        box-shadow: 0 0 15px rgba(0, 243, 255, 0.8);
+    }
+
+    .timeline-content {
+        background: rgba(10, 14, 39, 0.5);
+        border: 1px solid rgba(0, 243, 255, 0.2);
+        border-radius: 12px;
+        padding: 1.5rem;
+    }
+
+    .timeline-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 0.8rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .timeline-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #00f3ff;
+        margin: 0;
+    }
+
+    .timeline-company {
+        color: #bf00ff;
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+    .timeline-date {
+        color: #666;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .timeline-description {
+        color: #a0a0a0;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        margin-bottom: 0.8rem;
+    }
+
+    .timeline-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .action-btn {
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        border: 1px solid;
+        background: transparent;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .action-btn-edit {
+        border-color: #ffd700;
+        color: #ffd700;
+    }
+
+    .action-btn-edit:hover {
+        background: rgba(255, 215, 0, 0.1);
+        box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+    }
+
+    .action-btn-delete {
+        border-color: #ff006e;
+        color: #ff006e;
+    }
+
+    .action-btn-delete:hover {
+        background: rgba(255, 0, 110, 0.1);
+        box-shadow: 0 0 15px rgba(255, 0, 110, 0.3);
+    }
+
+    /* Grid items for products/certifications */
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1rem;
+    }
+
+    .grid-item {
+        background: rgba(10, 14, 39, 0.5);
+        border: 1px solid rgba(0, 243, 255, 0.2);
+        border-radius: 12px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .grid-item:hover {
+        border-color: #00f3ff;
+        box-shadow: 0 5px 25px rgba(0, 243, 255, 0.2);
+        transform: translateY(-3px);
+    }
+
+    .grid-item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 0.5rem;
+    }
+
+    .grid-item-title {
+        font-weight: 700;
+        color: #00f3ff;
+        font-size: 1rem;
+        margin: 0;
+    }
+
+    .grid-item-date {
+        color: #666;
+        font-size: 0.8rem;
+    }
+
+    .grid-item-description {
+        color: #a0a0a0;
+        font-size: 0.85rem;
+        line-height: 1.5;
+        margin-bottom: 0.8rem;
+    }
+
+    .grid-item-actions {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: flex-end;
+    }
+
+    .badge-status {
+        display: inline-block;
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .badge-success {
+        background: rgba(0, 255, 159, 0.2);
+        color: #00ff9f;
+        border: 1px solid #00ff9f;
+    }
+
+    .badge-warning {
+        background: rgba(255, 215, 0, 0.2);
+        color: #ffd700;
+        border: 1px solid #ffd700;
+    }
+
+    .badge-danger {
+        background: rgba(255, 0, 110, 0.2);
+        color: #ff006e;
+        border: 1px solid #ff006e;
+    }
+
+    .no-data {
+        text-align: center;
+        padding: 3rem 2rem;
+        color: #666;
+    }
+
+    .no-data-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    @media (max-width: 991px) {
+        .profile-card {
+            position: static;
+            margin-bottom: 2rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .timeline-header {
+            flex-direction: column;
+        }
+        
+        .pdf-actions {
+            flex-direction: column;
+        }
+        
+        .grid-container {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="cv-container">
+    <div class="container-fluid">
+        <a href="{% url 'home' %}" class="back-btn">
+            <i class="bi bi-arrow-left me-2"></i>Volver
+        </a>
 
         <div class="row g-4">
-            <!-- Sidebar (Left) - Profile & Quick Info -->
+            <!-- Sidebar Profile -->
             <div class="col-lg-3">
-                <!-- Profile Card -->
-                <div class="card shadow-sm border-0 rounded-4 overflow-hidden sticky-top" style="top: 20px;">
-                    <!-- Header Background -->
-                    <div style="height: 80px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+                <div class="profile-card">
+                    <div class="profile-header"></div>
                     
-                    <div class="card-body text-center p-4" style="margin-top: -40px; position: relative;">
-                        <!-- Profile Photo -->
-                        <div class="mb-3">
-                            {% if datos.fotoperfil %}
-                                <img src="{{ datos.fotoperfil.url }}" alt="" 
-                                     class="rounded-circle border-4 border-white shadow-sm" 
-                                     style="width: 120px; height: 120px; object-fit: cover;">
-                            {% else %}
-                                <div class="rounded-circle border-4 border-white shadow-sm mx-auto d-flex align-items-center justify-content-center" 
-                                     style="width: 120px; height: 120px; background: #e9ecef;">
-                                    <i class="bi bi-person-fill text-secondary" style="font-size: 3rem;"></i>
-                                </div>
-                            {% endif %}
-                        </div>
+                    <div class="profile-photo-wrapper">
+                        {% if datos.fotoperfil %}
+                            <img src="{{ datos.fotoperfil.url }}" alt="" class="profile-photo">
+                        {% else %}
+                            <div class="profile-photo-placeholder">
+                                <i class="bi bi-person-fill text-secondary" style="font-size: 4rem;"></i>
+                            </div>
+                        {% endif %}
+                    </div>
 
-                        <!-- Name -->
-                        <h3 class="fw-bold text-dark mb-1">{{ datos.nombres|upper }}</h3>
-                        <h4 class="fw-bold text-dark mb-3">{{ datos.apellidos|upper }}</h4>
-
-                        <!-- Profile Description -->
+                    <div class="profile-body">
+                        <h3 class="profile-name">{{ datos.nombres|upper }} {{ datos.apellidos|upper }}</h3>
+                        
                         {% if datos.descripcionperfil %}
-                            <p class="text-muted small mb-4">{{ datos.descripcionperfil }}</p>
+                            <p class="profile-description">{{ datos.descripcionperfil }}</p>
                         {% endif %}
 
-                        <!-- Edit Button -->
-                        <a href="{% url 'crear_datos_personales' %}" class="btn btn-primary btn-sm rounded-3 w-100 mb-3">
-                            <i class="bi bi-pencil me-1"></i> Editar Datos
+                        <a href="{% url 'crear_datos_personales' %}" class="edit-profile-btn">
+                            <i class="bi bi-pencil me-2"></i>Editar Datos
                         </a>
 
-                        <hr class="my-4">
+                        <div class="section-divider"></div>
 
                         <!-- Contact Section -->
-                        <div class="text-start">
-                            <h6 class="fw-bold text-dark mb-3">CONTACTO</h6>
-                            
-                            {% if user.email %}
-                            <div class="mb-2">
-                                <i class="bi bi-envelope text-primary"></i>
-                                <small class="d-block text-break">{{ user.email }}</small>
-                            </div>
-                            {% endif %}
-
-                            {% if datos.telefonoconvencional %}
-                            <div class="mb-2">
-                                <i class="bi bi-telephone text-primary"></i>
-                                <small class="d-block">{{ datos.telefonoconvencional }}</small>
-                            </div>
-                            {% endif %}
-
-                            {% if datos.telefonofijo %}
-                            <div class="mb-2">
-                                <i class="bi bi-telephone-fill text-primary"></i>
-                                <small class="d-block">{{ datos.telefonofijo }}</small>
-                            </div>
-                            {% endif %}
-
-                            {% if datos.sitioweb %}
-                            <div class="mb-2">
-                                <i class="bi bi-globe text-primary"></i>
-                                <small class="d-block">
-                                    <a href="{{ datos.sitioweb }}" target="_blank" class="text-decoration-none">
-                                        {{ datos.sitioweb }}
-                                    </a>
-                                </small>
-                            </div>
-                            {% endif %}
+                        <h6 class="section-title-small">CONTACTO</h6>
+                        
+                        {% if user.email %}
+                        <div class="contact-item">
+                            <i class="bi bi-envelope contact-icon"></i>
+                            <small class="contact-text">{{ user.email }}</small>
                         </div>
+                        {% endif %}
 
-                        <hr class="my-4">
+                        {% if datos.telefonoconvencional %}
+                        <div class="contact-item">
+                            <i class="bi bi-telephone contact-icon"></i>
+                            <small class="contact-text">{{ datos.telefonoconvencional }}</small>
+                        </div>
+                        {% endif %}
+
+                        {% if datos.telefonofijo %}
+                        <div class="contact-item">
+                            <i class="bi bi-telephone-fill contact-icon"></i>
+                            <small class="contact-text">{{ datos.telefonofijo }}</small>
+                        </div>
+                        {% endif %}
+
+                        {% if datos.sitioweb %}
+                        <div class="contact-item">
+                            <i class="bi bi-globe contact-icon"></i>
+                            <small class="contact-text">
+                                <a href="{{ datos.sitioweb }}" target="_blank" style="color: #00f3ff; text-decoration: none;">
+                                    {{ datos.sitioweb }}
+                                </a>
+                            </small>
+                        </div>
+                        {% endif %}
+
+                        <div class="section-divider"></div>
 
                         <!-- Personal Info -->
-                        <div class="text-start">
-                            <h6 class="fw-bold text-dark mb-3">INFORMACIÓN PERSONAL</h6>
-                            
-                            {% if datos.numerocedula %}
-                            <div class="mb-2">
-                                <small class="text-muted d-block">CÉDULA</small>
-                                <small class="fw-bold">{{ datos.numerocedula }}</small>
+                        <h6 class="section-title-small">INFORMACIÓN PERSONAL</h6>
+                        
+                        {% if datos.numerocedula %}
+                        <div class="info-item">
+                            <div>
+                                <div class="info-label">CÉDULA</div>
+                                <div class="info-value">{{ datos.numerocedula }}</div>
                             </div>
-                            {% endif %}
-
-                            {% if datos.nacionalidad %}
-                            <div class="mb-2">
-                                <small class="text-muted d-block">NACIONALIDAD</small>
-                                <small class="fw-bold">{{ datos.nacionalidad }}</small>
-                            </div>
-                            {% endif %}
-
-                            {% if datos.fechanacimiento %}
-                            <div class="mb-2">
-                                <small class="text-muted d-block">NACIMIENTO</small>
-                                <small class="fw-bold">{{ datos.fechanacimiento|date:"d/m/Y" }}</small>
-                            </div>
-                            {% endif %}
-
-                            {% if datos.estadocivil %}
-                            <div class="mb-2">
-                                <small class="text-muted d-block">ESTADO CIVIL</small>
-                                <small class="fw-bold">{{ datos.estadocivil }}</small>
-                            </div>
-                            {% endif %}
                         </div>
+                        {% endif %}
+
+                        {% if datos.nacionalidad %}
+                        <div class="info-item">
+                            <div>
+                                <div class="info-label">NACIONALIDAD</div>
+                                <div class="info-value">{{ datos.nacionalidad }}</div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if datos.fechanacimiento %}
+                        <div class="info-item">
+                            <div>
+                                <div class="info-label">NACIMIENTO</div>
+                                <div class="info-value">{{ datos.fechanacimiento|date:"d/m/Y" }}</div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if datos.estadocivil %}
+                        <div class="info-item">
+                            <div>
+                                <div class="info-label">ESTADO CIVIL</div>
+                                <div class="info-value">{{ datos.estadocivil }}</div>
+                            </div>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
 
-            <!-- Main Content (Right) -->
+            <!-- Main Content -->
             <div class="col-lg-9">
-                <!-- Header Actions -->
-                <div class="mb-4 d-flex gap-2 justify-content-end">
-                    <a href="{% url 'visualizar_cv_pdf' %}" class="btn btn-sm rounded-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;" target="_blank">
-                        <i class="bi bi-eye me-1"></i>Ver PDF
+                <!-- PDF Actions -->
+                <div class="pdf-actions">
+                    <a href="{% url 'visualizar_cv_pdf' %}" class="pdf-btn" target="_blank">
+                        <i class="bi bi-eye me-2"></i>Ver PDF
                     </a>
-                    <a href="{% url 'descargar_cv_pdf' %}" class="btn btn-sm rounded-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">
-                        <i class="bi bi-download me-1"></i>Descargar PDF
+                    <a href="{% url 'descargar_cv_pdf' %}" class="pdf-btn">
+                        <i class="bi bi-download me-2"></i>Descargar PDF
                     </a>
                 </div>
-                    
+
                 <!-- Experiencia Laboral -->
-                <div class="card shadow-sm border-0 rounded-4 mb-4">
-                    <div class="card-header bg-white border-0 pt-4 pb-0">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="fw-bold text-dark mb-0">
-                                <i class="bi bi-briefcase-fill me-2" style="color: #667eea;"></i>EXPERIENCIA PROFESIONAL
-                            </h5>
-                            <a href="{% url 'crear_experiencia_laboral' %}" class="btn btn-sm btn-outline-primary rounded-3">
-                                <i class="bi bi-plus"></i> Agregar
-                            </a>
-                        </div>
+                <div class="content-card">
+                    <div class="card-header-custom">
+                        <h5 class="card-title">
+                            <i class="bi bi-briefcase-fill"></i>
+                            EXPERIENCIA PROFESIONAL
+                        </h5>
+                        <a href="{% url 'crear_experiencia_laboral' %}" class="add-btn">
+                            <i class="bi bi-plus me-1"></i>Agregar
+                        </a>
                     </div>
-                    <div class="card-body">
-                        {% if experiencias %}
-                            <div class="timeline">
-                                {% for exp in experiencias %}
-                                    <div class="timeline-item mb-4">
-                                        <div class="d-flex">
-                                            <div class="me-3">
-                                                <div class="timeline-badge rounded-circle" 
-                                                     style="width: 14px; height: 14px; background: #667eea; margin-top: 4px;"></div>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                                    <div>
-                                                        <h6 class="fw-bold mb-1">{{ exp.cargodesempenado }}</h6>
-                                                        <p class="text-muted mb-1"><strong>{{ exp.nombreempresa }}</strong></p>
-                                                        <small class="text-muted">
-                                                            {{ exp.fechainiciogestion|date:"M Y" }}
-                                                            {% if exp.fechafingestion %}
-                                                                - {{ exp.fechafingestion|date:"M Y" }}
-                                                            {% else %}
-                                                                - Presente
-                                                            {% endif %}
-                                                        </small>
-                                                    </div>
-                                                    <div>
-                                                        <a href="{% url 'editar_experiencia_laboral' exp.id %}" class="btn btn-sm btn-outline-warning rounded-2">
-                                                            <i class="bi bi-pencil"></i>
-                                                        </a>
-                                                        <form method="POST" action="{% url 'eliminar_experiencia_laboral' exp.id %}" style="display:inline;">
-                                                            {% csrf_token %}
-                                                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-2" onclick="return confirm('¿Eliminar?')">
-                                                                <i class="bi bi-trash"></i>
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                                {% if exp.descripcionfunciones %}
-                                                    <p class="small text-muted mb-0">{{ exp.descripcionfunciones }}</p>
-                                                {% endif %}
-                                            </div>
+                    
+                    {% if experiencias %}
+                        {% for exp in experiencias %}
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <div class="timeline-content">
+                                    <div class="timeline-header">
+                                        <div>
+                                            <h6 class="timeline-title">{{ exp.cargo }}</h6>
+                                            <div class="timeline-company">{{ exp.empresa }}</div>
+                                        </div>
+                                        <div class="timeline-date">
+                                            <i class="bi bi-calendar"></i>
+                                            {{ exp.fecha_inicio|date:"M Y" }} - 
+                                            {% if exp.fecha_fin %}{{ exp.fecha_fin|date:"M Y" }}{% else %}Actual{% endif %}
                                         </div>
                                     </div>
-                                {% endfor %}
+                                    {% if exp.descripcion %}
+                                        <p class="timeline-description">{{ exp.descripcion }}</p>
+                                    {% endif %}
+                                    <div class="timeline-actions">
+                                        <a href="{% url 'editar_experiencia_laboral' exp.id %}" class="action-btn action-btn-edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form method="POST" action="{% url 'eliminar_experiencia_laboral' exp.id %}" style="display:inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="action-btn action-btn-delete" onclick="return confirm('¿Eliminar?')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
-                        {% else %}
-                            <div class="text-center py-4 text-muted">
-                                <i class="bi bi-inbox" style="font-size: 2rem;"></i>
-                                <p class="mb-0 mt-2">Sin experiencias laborales</p>
-                                <a href="{% url 'crear_experiencia_laboral' %}" class="btn btn-sm btn-primary mt-2">Agregar Primera Experiencia</a>
-                            </div>
-                        {% endif %}
-                    </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="no-data">
+                            <div class="no-data-icon"><i class="bi bi-briefcase"></i></div>
+                            <p>No hay experiencias registradas. <a href="{% url 'crear_experiencia_laboral' %}" style="color: #00f3ff;">Agregar una</a></p>
+                        </div>
+                    {% endif %}
                 </div>
 
-                <!-- Cursos y Capacitaciones -->
-                <div class="card shadow-sm border-0 rounded-4 mb-4">
-                    <div class="card-header bg-white border-0 pt-4 pb-0">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="fw-bold text-dark mb-0">
-                                <i class="bi bi-mortarboard-fill me-2" style="color: #667eea;"></i>FORMACIÓN Y CURSOS
-                            </h5>
-                            <a href="{% url 'crear_curso' %}" class="btn btn-sm btn-outline-primary rounded-3">
-                                <i class="bi bi-plus"></i> Agregar
-                            </a>
-                        </div>
+                <!-- Educación -->
+                {% if educacion %}
+                <div class="content-card">
+                    <div class="card-header-custom">
+                        <h5 class="card-title">
+                            <i class="bi bi-mortarboard-fill"></i>
+                            EDUCACIÓN
+                        </h5>
+                        <a href="{% url 'crear_educacion' %}" class="add-btn">
+                            <i class="bi bi-plus me-1"></i>Agregar
+                        </a>
                     </div>
-                    <div class="card-body">
-                        {% if cursos %}
-                            <div class="timeline">
-                                {% for curso in cursos %}
-                                    <div class="timeline-item mb-4">
-                                        <div class="d-flex">
-                                            <div class="me-3">
-                                                <div class="timeline-badge rounded-circle" 
-                                                     style="width: 14px; height: 14px; background: #667eea; margin-top: 4px;"></div>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                                    <div>
-                                                        <h6 class="fw-bold mb-1">{{ curso.nombrecurso }}</h6>
-                                                        <p class="text-muted mb-1"><strong>{{ curso.entidadpatrocinadora }}</strong></p>
-                                                        <small class="text-muted">
-                                                            {{ curso.fechainicio|date:"M Y" }}
-                                                            {% if curso.fechafin %}
-                                                                - {{ curso.fechafin|date:"M Y" }}
-                                                            {% endif %}
-                                                            {% if curso.totalhoras %}
-                                                                • {{ curso.totalhoras }} horas
-                                                            {% endif %}
-                                                        </small>
-                                                    </div>
-                                                    <div>
-                                                        <a href="{% url 'editar_curso' curso.id %}" class="btn btn-sm btn-outline-warning rounded-2">
-                                                            <i class="bi bi-pencil"></i>
-                                                        </a>
-                                                        <form method="POST" action="{% url 'eliminar_curso' curso.id %}" style="display:inline;">
-                                                            {% csrf_token %}
-                                                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-2" onclick="return confirm('¿Eliminar?')">
-                                                                <i class="bi bi-trash"></i>
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                                {% if curso.descripcioncurso %}
-                                                    <p class="small text-muted mb-0">{{ curso.descripcioncurso }}</p>
-                                                {% endif %}
-                                            </div>
-                                        </div>
+                    
+                    {% for edu in educacion %}
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-header">
+                                    <div>
+                                        <h6 class="timeline-title">{{ edu.titulo }}</h6>
+                                        <div class="timeline-company">{{ edu.institucion }}</div>
                                     </div>
-                                {% endfor %}
+                                    <div class="timeline-date">
+                                        <i class="bi bi-calendar"></i>
+                                        {{ edu.fecha_inicio|date:"Y" }} - 
+                                        {% if edu.fecha_fin %}{{ edu.fecha_fin|date:"Y" }}{% else %}En curso{% endif %}
+                                    </div>
+                                </div>
+                                <div class="timeline-actions">
+                                    <a href="{% url 'editar_educacion' edu.id %}" class="action-btn action-btn-edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form method="POST" action="{% url 'eliminar_educacion' edu.id %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="action-btn action-btn-delete" onclick="return confirm('¿Eliminar?')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
-                        {% else %}
-                            <div class="text-center py-4 text-muted">
-                                <i class="bi bi-book" style="font-size: 2rem;"></i>
-                                <p class="mb-0 mt-2">Sin cursos registrados</p>
-                                <a href="{% url 'crear_curso' %}" class="btn btn-sm btn-primary mt-2">Agregar Curso</a>
-                            </div>
-                        {% endif %}
-                    </div>
+                        </div>
+                    {% endfor %}
                 </div>
+                {% endif %}
 
-                <!-- Reconocimientos -->
-                <div class="card shadow-sm border-0 rounded-4 mb-4">
-                    <div class="card-header bg-white border-0 pt-4 pb-0">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="fw-bold text-dark mb-0">
-                                <i class="bi bi-award-fill me-2" style="color: #667eea;"></i>RECONOCIMIENTOS Y CERTIFICACIONES
-                            </h5>
-                            <a href="{% url 'crear_reconocimiento' %}" class="btn btn-sm btn-outline-primary rounded-3">
-                                <i class="bi bi-plus"></i> Agregar
-                            </a>
-                        </div>
+                <!-- Certificaciones -->
+                {% if certificaciones %}
+                <div class="content-card">
+                    <div class="card-header-custom">
+                        <h5 class="card-title">
+                            <i class="bi bi-award-fill"></i>
+                            CERTIFICACIONES
+                        </h5>
+                        <a href="{% url 'crear_certificacion' %}" class="add-btn">
+                            <i class="bi bi-plus me-1"></i>Agregar
+                        </a>
                     </div>
-                    <div class="card-body">
-                        {% if reconocimientos %}
-                            <div class="timeline">
-                                {% for reco in reconocimientos %}
-                                    <div class="timeline-item mb-4">
-                                        <div class="d-flex">
-                                            <div class="me-3">
-                                                <div class="timeline-badge rounded-circle" 
-                                                     style="width: 14px; height: 14px; background: #667eea; margin-top: 4px;"></div>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                                    <div>
-                                                        <h6 class="fw-bold mb-1">{{ reco.get_tiporeconocimiento_display }}</h6>
-                                                        <p class="text-muted mb-1"><strong>{{ reco.entidadpatrocinadora }}</strong></p>
-                                                        <small class="text-muted">{{ reco.fechareconocimiento|date:"d M Y" }}</small>
-                                                    </div>
-                                                    <div>
-                                                        <a href="{% url 'editar_reconocimiento' reco.id %}" class="btn btn-sm btn-outline-warning rounded-2">
-                                                            <i class="bi bi-pencil"></i>
-                                                        </a>
-                                                        <form method="POST" action="{% url 'eliminar_reconocimiento' reco.id %}" style="display:inline;">
-                                                            {% csrf_token %}
-                                                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-2" onclick="return confirm('¿Eliminar?')">
-                                                                <i class="bi bi-trash"></i>
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                                {% if reco.descripcionreconocimiento %}
-                                                    <p class="small text-muted mb-0">{{ reco.descripcionreconocimiento }}</p>
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                    </div>
-                                {% endfor %}
+                    
+                    <div class="grid-container">
+                        {% for cert in certificaciones %}
+                            <div class="grid-item">
+                                <div class="grid-item-header">
+                                    <h6 class="grid-item-title">{{ cert.nombre }}</h6>
+                                </div>
+                                <p class="grid-item-date">
+                                    <i class="bi bi-calendar me-1"></i>{{ cert.fecha|date:"M Y" }}
+                                </p>
+                                {% if cert.institucion %}
+                                    <p class="grid-item-description">{{ cert.institucion }}</p>
+                                {% endif %}
+                                <div class="grid-item-actions">
+                                    <a href="{% url 'editar_certificacion' cert.id %}" class="action-btn action-btn-edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form method="POST" action="{% url 'eliminar_certificacion' cert.id %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="action-btn action-btn-delete" onclick="return confirm('¿Eliminar?')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
-                        {% else %}
-                            <div class="text-center py-4 text-muted">
-                                <i class="bi bi-star" style="font-size: 2rem;"></i>
-                                <p class="mb-0 mt-2">Sin reconocimientos registrados</p>
-                                <a href="{% url 'crear_reconocimiento' %}" class="btn btn-sm btn-primary mt-2">Agregar Reconocimiento</a>
-                            </div>
-                        {% endif %}
+                        {% endfor %}
                     </div>
                 </div>
+                {% endif %}
+
+                <!-- Habilidades -->
+                {% if habilidades %}
+                <div class="content-card">
+                    <div class="card-header-custom">
+                        <h5 class="card-title">
+                            <i class="bi bi-lightning-fill"></i>
+                            HABILIDADES
+                        </h5>
+                        <a href="{% url 'crear_habilidad' %}" class="add-btn">
+                            <i class="bi bi-plus me-1"></i>Agregar
+                        </a>
+                    </div>
+                    
+                    <div class="grid-container">
+                        {% for hab in habilidades %}
+                            <div class="grid-item">
+                                <div class="grid-item-header">
+                                    <h6 class="grid-item-title">{{ hab.nombre }}</h6>
+                                </div>
+                                {% if hab.nivel %}
+                                    <p class="grid-item-description">Nivel: {{ hab.nivel }}</p>
+                                {% endif %}
+                                <div class="grid-item-actions">
+                                    <a href="{% url 'editar_habilidad' hab.id %}" class="action-btn action-btn-edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form method="POST" action="{% url 'eliminar_habilidad' hab.id %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="action-btn action-btn-delete" onclick="return confirm('¿Eliminar?')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
 
                 <!-- Productos Académicos -->
                 {% if productos_academicos %}
-                <div class="card shadow-sm border-0 rounded-4 mb-4">
-                    <div class="card-header bg-white border-0 pt-4 pb-0">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="fw-bold text-dark mb-0">
-                                <i class="bi bi-files-alt me-2" style="color: #667eea;"></i>PRODUCTOS ACADÉMICOS
-                            </h5>
-                            <a href="{% url 'crear_producto_academico' %}" class="btn btn-sm btn-outline-primary rounded-3">
-                                <i class="bi bi-plus"></i> Agregar
-                            </a>
-                        </div>
+                <div class="content-card">
+                    <div class="card-header-custom">
+                        <h5 class="card-title">
+                            <i class="bi bi-journal-text"></i>
+                            PRODUCTOS ACADÉMICOS
+                        </h5>
+                        <a href="{% url 'crear_producto_academico' %}" class="add-btn">
+                            <i class="bi bi-plus me-1"></i>Agregar
+                        </a>
                     </div>
-                    <div class="card-body">
-                        <div class="row g-3">
-                            {% for prod in productos_academicos %}
-                                <div class="col-md-6">
-                                    <div class="border rounded-3 p-3">
-                                        <div class="d-flex justify-content-between align-items-start mb-2">
-                                            <div>
-                                                <h6 class="fw-bold mb-1">{{ prod.nombrerecurso }}</h6>
-                                                <small class="text-muted">{{ prod.clasificador }}</small>
-                                            </div>
-                                            <div>
-                                                <a href="{% url 'editar_producto_academico' prod.id %}" class="btn btn-sm btn-outline-warning rounded-2">
-                                                    <i class="bi bi-pencil"></i>
-                                                </a>
-                                                <form method="POST" action="{% url 'eliminar_producto_academico' prod.id %}" style="display:inline;">
-                                                    {% csrf_token %}
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-2" onclick="return confirm('¿Eliminar?')">
-                                                        <i class="bi bi-trash"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
+                    
+                    <div class="grid-container">
+                        {% for prod in productos_academicos %}
+                            <div class="grid-item">
+                                <div class="grid-item-header">
+                                    <h6 class="grid-item-title">{{ prod.nombreproducto }}</h6>
                                 </div>
-                            {% endfor %}
-                        </div>
+                                <p class="grid-item-date">
+                                    <i class="bi bi-calendar me-1"></i>{{ prod.fechaproducto|date:"d M Y" }}
+                                </p>
+                                <div class="grid-item-actions">
+                                    <a href="{% url 'editar_producto_academico' prod.id %}" class="action-btn action-btn-edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form method="POST" action="{% url 'eliminar_producto_academico' prod.id %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="action-btn action-btn-delete" onclick="return confirm('¿Eliminar?')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
-                {% else %}
-                <p class="text-muted">No hay productos académicos registrados. <a href="{% url 'crear_producto_academico' %}">Agregar uno</a></p>
                 {% endif %}
 
                 <!-- Productos Laborales -->
                 {% if productos_laborales %}
-                <div class="card shadow-sm border-0 rounded-4 mb-4">
-                    <div class="card-header bg-white border-0 pt-4 pb-0">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="fw-bold text-dark mb-0">
-                                <i class="bi bi-bag-check-fill me-2" style="color: #667eea;"></i>PRODUCTOS LABORALES
-                            </h5>
-                            <a href="{% url 'crear_producto_laboral' %}" class="btn btn-sm btn-outline-primary rounded-3">
-                                <i class="bi bi-plus"></i> Agregar
-                            </a>
-                        </div>
+                <div class="content-card">
+                    <div class="card-header-custom">
+                        <h5 class="card-title">
+                            <i class="bi bi-bag-check-fill"></i>
+                            PRODUCTOS LABORALES
+                        </h5>
+                        <a href="{% url 'crear_producto_laboral' %}" class="add-btn">
+                            <i class="bi bi-plus me-1"></i>Agregar
+                        </a>
                     </div>
-                    <div class="card-body">
-                        <div class="row g-3">
-                            {% for prod in productos_laborales %}
-                                <div class="col-md-6">
-                                    <div class="border rounded-3 p-3">
-                                        <div class="d-flex justify-content-between align-items-start">
-                                            <div>
-                                                <h6 class="fw-bold mb-1">{{ prod.nombreproducto }}</h6>
-                                                <small class="text-muted d-block">{{ prod.fechaproducto|date:"d M Y" }}</small>
-                                            </div>
-                                            <div>
-                                                <a href="{% url 'editar_producto_laboral' prod.id %}" class="btn btn-sm btn-outline-warning rounded-2">
-                                                    <i class="bi bi-pencil"></i>
-                                                </a>
-                                                <form method="POST" action="{% url 'eliminar_producto_laboral' prod.id %}" style="display:inline;">
-                                                    {% csrf_token %}
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-2" onclick="return confirm('¿Eliminar?')">
-                                                        <i class="bi bi-trash"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
+                    
+                    <div class="grid-container">
+                        {% for prod in productos_laborales %}
+                            <div class="grid-item">
+                                <div class="grid-item-header">
+                                    <h6 class="grid-item-title">{{ prod.nombreproducto }}</h6>
                                 </div>
-                            {% endfor %}
-                        </div>
+                                <p class="grid-item-date">
+                                    <i class="bi bi-calendar me-1"></i>{{ prod.fechaproducto|date:"d M Y" }}
+                                </p>
+                                <div class="grid-item-actions">
+                                    <a href="{% url 'editar_producto_laboral' prod.id %}" class="action-btn action-btn-edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form method="POST" action="{% url 'eliminar_producto_laboral' prod.id %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="action-btn action-btn-delete" onclick="return confirm('¿Eliminar?')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
                 {% endif %}
 
                 <!-- Ventas -->
                 {% if ventas %}
-                <div class="card shadow-sm border-0 rounded-4 mb-4">
-                    <div class="card-header bg-white border-0 pt-4 pb-0">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="fw-bold text-dark mb-0">
-                                <i class="bi bi-shop me-2" style="color: #667eea;"></i>PRODUCTOS EN VENTA
-                            </h5>
-                            <a href="{% url 'crear_venta_garage' %}" class="btn btn-sm btn-outline-primary rounded-3">
-                                <i class="bi bi-plus"></i> Agregar
-                            </a>
-                        </div>
+                <div class="content-card">
+                    <div class="card-header-custom">
+                        <h5 class="card-title">
+                            <i class="bi bi-shop"></i>
+                            PRODUCTOS EN VENTA
+                        </h5>
+                        <a href="{% url 'crear_venta_garage' %}" class="add-btn">
+                            <i class="bi bi-plus me-1"></i>Agregar
+                        </a>
                     </div>
-                    <div class="card-body">
-                        <div class="row g-3">
-                            {% for venta in ventas %}
-                                <div class="col-md-6">
-                                    <div class="border rounded-3 p-3">
-                                        <div class="d-flex justify-content-between align-items-start mb-2">
-                                            <div>
-                                                <h6 class="fw-bold mb-1">{{ venta.nombreproducto }}</h6>
-                                                <small class="text-muted d-block">
-                                                    <span class="badge bg-{% if venta.estadoproducto == 'Bueno' %}success{% elif venta.estadoproducto == 'Regular' %}warning{% else %}danger{% endif %}">
-                                                        {{ venta.estadoproducto }}
-                                                    </span>
-                                                </small>
-                                                <strong class="text-primary">${{ venta.valordelbien }}</strong>
-                                            </div>
-                                            <div>
-                                                <a href="{% url 'editar_venta_garage' venta.id %}" class="btn btn-sm btn-outline-warning rounded-2">
-                                                    <i class="bi bi-pencil"></i>
-                                                </a>
-                                                <form method="POST" action="{% url 'eliminar_venta_garage' venta.id %}" style="display:inline;">
-                                                    {% csrf_token %}
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-2" onclick="return confirm('¿Eliminar?')">
-                                                        <i class="bi bi-trash"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
+                    
+                    <div class="grid-container">
+                        {% for venta in ventas %}
+                            <div class="grid-item">
+                                <div class="grid-item-header">
+                                    <h6 class="grid-item-title">{{ venta.nombreproducto }}</h6>
                                 </div>
-                            {% endfor %}
-                        </div>
+                                <span class="badge-status {% if venta.estadoproducto == 'Bueno' %}badge-success{% elif venta.estadoproducto == 'Regular' %}badge-warning{% else %}badge-danger{% endif %}">
+                                    {{ venta.estadoproducto }}
+                                </span>
+                                <p class="grid-item-description" style="color: #00ff9f; font-weight: 700; font-size: 1.1rem;">
+                                    ${{ venta.valordelbien }}
+                                </p>
+                                <div class="grid-item-actions">
+                                    <a href="{% url 'editar_venta_garage' venta.id %}" class="action-btn action-btn-edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form method="POST" action="{% url 'eliminar_venta_garage' venta.id %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="action-btn action-btn-delete" onclick="return confirm('¿Eliminar?')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        {% endfor %}
                     </div>
                 </div>
                 {% endif %}
-            </div>
-        </div>
-    </div>
-</div>
-
-<style>
-    .timeline {
-        position: relative;
-        padding: 0;
-    }
-
-    .timeline-item {
-        position: relative;
-    }
-
-    .timeline-item:not(:last-child)::before {
-        content: '';
-        position: absolute;
-        left: 6px;
-        top: 30px;
-        width: 2px;
-        height: calc(100% + 10px);
-        background: #e9ecef;
-    }
-
-    .timeline-badge {
-        flex-shrink: 0;
-    }
-
-    .card {
-        transition: all 0.3s ease;
-    }
-
-    .card:hover {
-        box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
-    }
-
-    .btn-outline-primary:hover {
-        background: #667eea;
-        border-color: #667eea;
-    }
-
-    .min-vh-100 {
-        min-height: 100vh;
-    }
-
-    .sticky-top {
-        top: 20px;
-    }
-
-    @media (max-width: 991px) {
-        .sticky-top {
-            position: static;
-        }
-    }
-</style>
-
-                </div>
             </div>
         </div>
     </div>

@@ -1,174 +1,336 @@
 {% extends 'base.html' %}
-{% load static %}
 
 {% block content %}
-<div class="container-fluid py-5" style="background: #f8f9fa; min-height: 100vh;">
-    <div class="container-lg">
-        <!-- Header -->
-        <div class="mb-5">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div>
-                    <h1 class="fw-bold text-dark mb-2">
-                        <i class="bi bi-file-earmark-person-fill me-2" style="color: #e74c3c;"></i>Administración de Hojas de Vida
-                    </h1>
-                    <p class="text-muted">Gestiona todas las hojas de vida del sistema</p>
-                </div>
-                <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm rounded-3">
-                    <i class="bi bi-arrow-left"></i> Volver
-                </a>
-            </div>
+<style>
+    .admin-container {
+        min-height: 90vh;
+        padding: 3rem 0;
+    }
+
+    .admin-header {
+        margin-bottom: 3rem;
+        text-align: center;
+    }
+
+    .admin-title {
+        font-size: 3rem;
+        font-weight: 900;
+        background: linear-gradient(45deg, #00ff9f, #ffd700);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: 3px;
+        margin-bottom: 0.5rem;
+    }
+
+    .admin-subtitle {
+        color: #666;
+        font-size: 1.1rem;
+    }
+
+    .search-box {
+        background: rgba(26, 31, 58, 0.8);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(0, 255, 159, 0.3);
+        border-radius: 15px;
+        padding: 1rem 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .search-input {
+        background: rgba(10, 14, 39, 0.6);
+        border: 1px solid rgba(0, 255, 159, 0.3);
+        color: #e0e0e0;
+        padding: 0.8rem 1rem;
+        border-radius: 10px;
+        width: 100%;
+    }
+
+    .search-input:focus {
+        background: rgba(10, 14, 39, 0.8);
+        border-color: #00ff9f;
+        box-shadow: 0 0 20px rgba(0, 255, 159, 0.3);
+        color: #fff;
+        outline: none;
+    }
+
+    .cv-card {
+        background: rgba(26, 31, 58, 0.8);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(0, 255, 159, 0.2);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cv-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(0, 255, 159, 0.1), transparent);
+        transition: left 0.5s;
+    }
+
+    .cv-card:hover {
+        border-color: #00ff9f;
+        box-shadow: 0 5px 30px rgba(0, 255, 159, 0.3);
+        transform: translateY(-5px);
+    }
+
+    .cv-card:hover::before {
+        left: 100%;
+    }
+
+    .cv-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .cv-photo {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid rgba(0, 255, 159, 0.3);
+        box-shadow: 0 0 20px rgba(0, 255, 159, 0.3);
+    }
+
+    .cv-photo-placeholder {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: rgba(10, 14, 39, 0.8);
+        border: 3px solid rgba(0, 255, 159, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .cv-info {
+        flex: 1;
+    }
+
+    .cv-name {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #00ff9f;
+        margin: 0;
+    }
+
+    .cv-username {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .cv-email {
+        color: #00f3ff;
+        font-size: 0.85rem;
+        margin-top: 0.3rem;
+    }
+
+    .cv-stats {
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .stat-icon {
+        color: #00f3ff;
+    }
+
+    .stat-value {
+        color: #e0e0e0;
+        font-weight: 600;
+    }
+
+    .cv-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .action-btn {
+        padding: 0.5rem 1.2rem;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        border: 1px solid;
+        background: transparent;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-view {
+        border-color: #00f3ff;
+        color: #00f3ff;
+    }
+
+    .btn-view:hover {
+        background: rgba(0, 243, 255, 0.1);
+        box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+        color: #00f3ff;
+    }
+
+    .btn-edit {
+        border-color: #ffd700;
+        color: #ffd700;
+    }
+
+    .btn-edit:hover {
+        background: rgba(255, 215, 0, 0.1);
+        box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        color: #ffd700;
+    }
+
+    .no-cvs {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: rgba(26, 31, 58, 0.5);
+        border-radius: 20px;
+        border: 1px dashed rgba(0, 255, 159, 0.3);
+    }
+
+    .no-cvs-icon {
+        font-size: 5rem;
+        color: #666;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    @media (max-width: 768px) {
+        .admin-title {
+            font-size: 2rem;
+        }
+        
+        .cv-header {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .cv-stats {
+            justify-content: center;
+        }
+    }
+</style>
+
+<main class="admin-container">
+    <div class="container">
+        <div class="admin-header">
+            <h1 class="admin-title">
+                <i class="bi bi-shield-lock-fill me-3"></i>PANEL ADMINISTRATIVO
+            </h1>
+            <p class="admin-subtitle">Gestión de Hojas de Vida</p>
         </div>
 
-        <!-- Stats Cards -->
-        <div class="row mb-5 g-3">
-            <div class="col-md-4">
-                <div class="card border-0 rounded-4 shadow-sm">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <h6 class="text-muted mb-2">TOTAL DE HOJAS</h6>
-                                <h3 class="fw-bold text-dark">{{ hojas_vida|length }}</h3>
-                            </div>
-                            <div class="rounded-circle" style="width: 50px; height: 50px; background: rgba(231, 76, 60, 0.1); display: flex; align-items: center; justify-content: center;">
-                                <i class="bi bi-file-earmark text-danger" style="font-size: 1.5rem;"></i>
-                            </div>
-                        </div>
-                    </div>
+        <div class="row">
+            <div class="col-lg-10 offset-lg-1">
+                <div class="search-box">
+                    <input type="text" 
+                           class="search-input" 
+                           id="searchInput" 
+                           placeholder="🔍 Buscar por nombre, apellido o email..."
+                           onkeyup="filterCVs()">
                 </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card border-0 rounded-4 shadow-sm">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <h6 class="text-muted mb-2">PERFILES ACTIVOS</h6>
-                                <h3 class="fw-bold text-dark">
-                                    {{ hojas_vida|dictsort:"perfilactivo"|length }}
-                                </h3>
-                            </div>
-                            <div class="rounded-circle" style="width: 50px; height: 50px; background: rgba(46, 204, 113, 0.1); display: flex; align-items: center; justify-content: center;">
-                                <i class="bi bi-check-circle-fill text-success" style="font-size: 1.5rem;"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card border-0 rounded-4 shadow-sm">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <h6 class="text-muted mb-2">ÚLTIMAS ACTUALIZACIONES</h6>
-                                <h6 class="fw-bold text-dark">Hoy</h6>
-                            </div>
-                            <div class="rounded-circle" style="width: 50px; height: 50px; background: rgba(52, 152, 219, 0.1); display: flex; align-items: center; justify-content: center;">
-                                <i class="bi bi-calendar-check-fill text-primary" style="font-size: 1.5rem;"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Table -->
-        <div class="card border-0 rounded-4 shadow-sm">
-            <div class="card-body p-4">
-                {% if hojas_vida %}
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle">
-                            <thead class="bg-light rounded-3">
-                                <tr>
-                                    <th class="fw-bold text-dark"><i class="bi bi-person-fill me-2"></i>Usuario</th>
-                                    <th class="fw-bold text-dark"><i class="bi bi-pencil-fill me-2"></i>Nombre Completo</th>
-                                    <th class="fw-bold text-dark"><i class="bi bi-credit-card me-2"></i>Cédula</th>
-                                    <th class="fw-bold text-dark"><i class="bi bi-toggle-on me-2"></i>Estado</th>
-                                    <th class="fw-bold text-dark"><i class="bi bi-calendar me-2"></i>Creación</th>
-                                    <th class="fw-bold text-dark text-center">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for hoja in hojas_vida %}
-                                    <tr class="border-bottom">
-                                        <td>
-                                            <strong class="text-dark">{{ hoja.user.username }}</strong>
-                                        </td>
-                                        <td>
-                                            <span class="text-dark">{{ hoja.nombres }} {{ hoja.apellidos }}</span>
-                                        </td>
-                                        <td>
-                                            <code class="text-muted">{{ hoja.numerocedula }}</code>
-                                        </td>
-                                        <td>
-                                            {% if hoja.perfilactivo %}
-                                                <span class="badge bg-success rounded-pill">
-                                                    <i class="bi bi-check-circle me-1"></i>Activo
-                                                </span>
-                                            {% else %}
-                                                <span class="badge bg-secondary rounded-pill">
-                                                    <i class="bi bi-x-circle me-1"></i>Inactivo
-                                                </span>
-                                            {% endif %}
-                                        </td>
-                                        <td>
-                                            <small class="text-muted">{{ hoja.fechacreacion|date:"d/m/Y" }}</small>
-                                        </td>
-                                        <td>
-                                            <div class="btn-group btn-group-sm" role="group">
-                                                <a href="{% url 'admin_ver_hoja_vida' hoja.user.id %}" 
-                                                   class="btn btn-outline-primary rounded-2" title="Ver">
-                                                    <i class="bi bi-eye"></i>
-                                                </a>
-                                                <a href="{% url 'admin_editar_hoja_vida' hoja.user.id %}" 
-                                                   class="btn btn-outline-warning rounded-2" title="Editar">
-                                                    <i class="bi bi-pencil"></i>
-                                                </a>
-                                                <a href="{% url 'admin_descargar_cv_pdf' hoja.user.id %}" 
-                                                   class="btn btn-outline-success rounded-2" title="Descargar">
-                                                    <i class="bi bi-download"></i>
-                                                </a>
+                <div id="cvList">
+                    {% if hojas_vida %}
+                        {% for hoja in hojas_vida %}
+                            <div class="cv-card" data-name="{{ hoja.datos.nombres|lower }} {{ hoja.datos.apellidos|lower }}" data-email="{{ hoja.user.email|lower }}">
+                                <div class="cv-header">
+                                    {% if hoja.datos.fotoperfil %}
+                                        <img src="{{ hoja.datos.fotoperfil.url }}" alt="" class="cv-photo">
+                                    {% else %}
+                                        <div class="cv-photo-placeholder">
+                                            <i class="bi bi-person-fill text-secondary" style="font-size: 2.5rem;"></i>
+                                        </div>
+                                    {% endif %}
+                                    
+                                    <div class="cv-info">
+                                        <h3 class="cv-name">{{ hoja.datos.nombres }} {{ hoja.datos.apellidos }}</h3>
+                                        <div class="cv-username">
+                                            <i class="bi bi-person-circle me-1"></i>{{ hoja.user.username }}
+                                        </div>
+                                        {% if hoja.user.email %}
+                                            <div class="cv-email">
+                                                <i class="bi bi-envelope me-1"></i>{{ hoja.user.email }}
                                             </div>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                {% else %}
-                    <div class="text-center py-5">
-                        <i class="bi bi-inbox" style="font-size: 3rem; color: #bdc3c7;"></i>
-                        <p class="mt-3 text-muted">
-                            <strong>No hay hojas de vida registradas</strong><br>
-                            Los usuarios pueden crear sus hojas de vida desde su panel.
-                        </p>
-                    </div>
-                {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="cv-stats">
+                                    <div class="stat-item">
+                                        <i class="bi bi-briefcase stat-icon"></i>
+                                        <span class="stat-value">{{ hoja.experiencias|length }} experiencias</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <i class="bi bi-mortarboard stat-icon"></i>
+                                        <span class="stat-value">{{ hoja.educacion|length }} educación</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <i class="bi bi-award stat-icon"></i>
+                                        <span class="stat-value">{{ hoja.certificaciones|length }} certificaciones</span>
+                                    </div>
+                                </div>
+
+                                <div class="cv-actions">
+                                    <a href="{% url 'admin_ver_hoja_vida' hoja.user.id %}" class="action-btn btn-view">
+                                        <i class="bi bi-eye"></i>Ver Completa
+                                    </a>
+                                    <a href="{% url 'admin_editar_hoja_vida' hoja.user.id %}" class="action-btn btn-edit">
+                                        <i class="bi bi-pencil"></i>Editar
+                                    </a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="no-cvs">
+                            <div class="no-cvs-icon">
+                                <i class="bi bi-inbox"></i>
+                            </div>
+                            <p style="color: #888; font-size: 1.2rem;">No hay hojas de vida registradas</p>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
-</div>
+</main>
 
-<style>
-    .btn-group-sm .btn {
-        padding: 0.4rem 0.6rem;
-    }
-
-    .btn-outline-primary:hover {
-        background: #3498db;
-        border-color: #3498db;
-    }
-
-    .btn-outline-warning:hover {
-        background: #f39c12;
-        border-color: #f39c12;
-    }
-
-    .btn-outline-success:hover {
-        background: #27ae60;
-        border-color: #27ae60;
-    }
-
-    .table tbody tr:hover {
-        background-color: rgba(0, 0, 0, 0.02);
-    }
-</style>
+<script>
+function filterCVs() {
+    const input = document.getElementById('searchInput');
+    const filter = input.value.toLowerCase();
+    const cvCards = document.querySelectorAll('.cv-card');
+    
+    cvCards.forEach(card => {
+        const name = card.getAttribute('data-name');
+        const email = card.getAttribute('data-email');
+        
+        if (name.includes(filter) || email.includes(filter)) {
+            card.style.display = '';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+</script>
 {% endblock %}

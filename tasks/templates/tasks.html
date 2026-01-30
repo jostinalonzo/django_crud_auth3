@@ -1,29 +1,208 @@
 {% extends 'base.html' %}
 {% block content %}
+<style>
+    .tasks-container {
+        min-height: 90vh;
+        padding: 3rem 0;
+    }
 
-<main class="container">
-    <div class="row">
-        <div class="col-md-6 offset-md-3">
-            <h1 class="text-center display-3 py-5">Tareas Pendientes</h1>
-            <ul class="list-group">
-                {% for task in tasks %}
-                    <a class="list-group-item" href="{% url 'task_detail' task.id %}">
-                            <header class="d-flex justify-content-between">
-                                {% if task.important %}
-                                    <h1 class="fw-bold text-success">{{task.title}}</h1>
-                                {% else %}
-                                <h1 class="fw-bold">{{task.title}}</h1>
-                                {% endif %}
-                                <p>{{task.user.username}}</p>
-                            </header>
+    .page-title {
+        font-size: 3.5rem;
+        font-weight: 900;
+        background: linear-gradient(45deg, #00f3ff, #bf00ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-align: center;
+        margin-bottom: 3rem;
+        letter-spacing: 3px;
+        animation: glow-pulse 2s ease-in-out infinite;
+    }
 
-                            <p>{{task.description}}</p>
-                            
-                            <p>{{task.important}}</p>
-                            <p>{{task.datecompleted|date:'M j Y:i'}}</p>
-                    </a>
-                {% endfor %}
-            </ul>
+    @keyframes glow-pulse {
+        0%, 100% {
+            filter: drop-shadow(0 0 15px #00f3ff);
+        }
+        50% {
+            filter: drop-shadow(0 0 25px #bf00ff);
+        }
+    }
+
+    .task-item {
+        background: rgba(26, 31, 58, 0.7);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(0, 243, 255, 0.2);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        text-decoration: none;
+        display: block;
+    }
+
+    .task-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.1), transparent);
+        transition: left 0.5s;
+    }
+
+    .task-item:hover {
+        transform: translateX(10px);
+        border-color: #00f3ff;
+        box-shadow: 0 5px 30px rgba(0, 243, 255, 0.3);
+    }
+
+    .task-item:hover::before {
+        left: 100%;
+    }
+
+    .task-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+    }
+
+    .task-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #e0e0e0;
+        margin: 0;
+    }
+
+    .task-title.important {
+        color: #00ff9f;
+        text-shadow: 0 0 10px #00ff9f;
+    }
+
+    .task-user {
+        color: #00f3ff;
+        font-size: 0.9rem;
+        background: rgba(0, 243, 255, 0.1);
+        padding: 0.3rem 1rem;
+        border-radius: 20px;
+        border: 1px solid rgba(0, 243, 255, 0.3);
+    }
+
+    .task-description {
+        color: #a0a0a0;
+        margin-bottom: 0.5rem;
+        line-height: 1.6;
+    }
+
+    .task-meta {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.85rem;
+        color: #666;
+    }
+
+    .task-date {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .task-badge {
+        background: rgba(255, 0, 110, 0.2);
+        color: #ff006e;
+        padding: 0.2rem 0.7rem;
+        border-radius: 15px;
+        font-size: 0.75rem;
+        border: 1px solid #ff006e;
+    }
+
+    .no-tasks {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: rgba(26, 31, 58, 0.5);
+        border-radius: 20px;
+        border: 1px dashed rgba(0, 243, 255, 0.3);
+    }
+
+    .no-tasks-icon {
+        font-size: 5rem;
+        color: #666;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    .no-tasks-text {
+        color: #888;
+        font-size: 1.2rem;
+    }
+
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 2.5rem;
+        }
+        
+        .task-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+    }
+</style>
+
+<main class="tasks-container">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <h1 class="page-title">TAREAS PENDIENTES</h1>
+                
+                {% if tasks %}
+                    <div class="task-list">
+                        {% for task in tasks %}
+                            <a class="task-item" href="{% url 'task_detail' task.id %}">
+                                <header class="task-header">
+                                    {% if task.important %}
+                                        <h2 class="task-title important">
+                                            <i class="bi bi-star-fill me-2"></i>{{ task.title }}
+                                        </h2>
+                                    {% else %}
+                                        <h2 class="task-title">
+                                            <i class="bi bi-circle me-2"></i>{{ task.title }}
+                                        </h2>
+                                    {% endif %}
+                                    <span class="task-user">
+                                        <i class="bi bi-person-fill me-1"></i>{{ task.user.username }}
+                                    </span>
+                                </header>
+
+                                <p class="task-description">{{ task.description }}</p>
+                                
+                                <div class="task-meta">
+                                    {% if task.important %}
+                                        <span class="task-badge">
+                                            <i class="bi bi-exclamation-circle me-1"></i>Importante
+                                        </span>
+                                    {% endif %}
+                                    {% if task.datecompleted %}
+                                        <span class="task-date">
+                                            <i class="bi bi-calendar-check"></i>
+                                            {{ task.datecompleted|date:'M j Y:i' }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="no-tasks">
+                        <div class="no-tasks-icon">
+                            <i class="bi bi-inbox"></i>
+                        </div>
+                        <p class="no-tasks-text">No hay tareas pendientes</p>
+                    </div>
+                {% endif %}
+            </div>
         </div>
     </div>
 </main>

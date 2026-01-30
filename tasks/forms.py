@@ -61,8 +61,11 @@ class DatosPersonalesForm(forms.ModelForm):
             }),
             'numerocedula': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Número de Cédula',
-                'required': 'required'
+                'placeholder': 'Número de Cédula (10 dígitos)',
+                'required': 'required',
+                'maxlength': '10',
+                'pattern': '[0-9]{10}',
+                'title': 'Debe ingresar exactamente 10 dígitos'
             }),
             'sexo': forms.Select(attrs={'class': 'form-control'}),
             'estadocivil': forms.TextInput(attrs={
@@ -112,6 +115,20 @@ class DatosPersonalesForm(forms.ModelForm):
         if fechanacimiento and fechanacimiento > date.today():
             raise ValidationError('La fecha de nacimiento no puede ser mayor a la fecha actual.')
         return fechanacimiento
+    
+    def clean_numerocedula(self):
+        """Validar que el número de cédula tenga exactamente 10 dígitos"""
+        numerocedula = self.cleaned_data.get('numerocedula')
+        if numerocedula:
+            # Eliminar espacios en blanco
+            numerocedula = numerocedula.strip()
+            # Validar que solo contenga dígitos
+            if not numerocedula.isdigit():
+                raise ValidationError('El número de cédula debe contener solo dígitos.')
+            # Validar que tenga exactamente 10 dígitos
+            if len(numerocedula) != 10:
+                raise ValidationError('El número de cédula debe tener exactamente 10 dígitos.')
+        return numerocedula
 
 
 class ExperienciaLaboralForm(forms.ModelForm):

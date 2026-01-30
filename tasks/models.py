@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.core.validators import FileExtensionValidator
+from django.core.validators import FileExtensionValidator, MinLengthValidator, MaxLengthValidator, RegexValidator
 from datetime import date
 
 class Task(models.Model):
@@ -34,7 +34,15 @@ class DatosPersonales(models.Model):
     nacionalidad = models.CharField(max_length=20, blank=True, null=True)
     lugarnacimiento = models.CharField(max_length=60, blank=True, null=True)
     fechanacimiento = models.DateField(blank=True, null=True)
-    numerocedula = models.CharField(max_length=10, unique=True)
+    numerocedula = models.CharField(
+        max_length=10,
+        unique=True,
+        validators=[
+            MinLengthValidator(10, message='El número de cédula debe tener exactamente 10 dígitos.'),
+            MaxLengthValidator(10, message='El número de cédula debe tener exactamente 10 dígitos.'),
+            RegexValidator(regex=r'^\d{10}$', message='El número de cédula debe contener solo dígitos.')
+        ]
+    )
     sexo = models.CharField(max_length=1, choices=SEXO_CHOICES, blank=True, null=True)
     estadocivil = models.CharField(max_length=50, blank=True, null=True)
     licenciaconducir = models.CharField(max_length=6, blank=True, null=True)
