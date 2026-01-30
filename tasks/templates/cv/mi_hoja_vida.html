@@ -705,6 +705,98 @@
                 </div>
                 {% endif %}
 
+                <!-- Reconocimientos -->
+                {% if reconocimientos %}
+                <div class="content-card">
+                    <div class="card-header-custom">
+                        <h5 class="card-title">
+                            <i class="bi bi-star-fill"></i>
+                            RECONOCIMIENTOS
+                        </h5>
+                        <a href="{% url 'crear_reconocimiento' %}" class="add-btn">
+                            <i class="bi bi-plus me-1"></i>Agregar
+                        </a>
+                    </div>
+                    
+                    <div class="grid-container">
+                        {% for rec in reconocimientos %}
+                            <div class="grid-item">
+                                <div class="grid-item-header">
+                                    <h6 class="grid-item-title">{{ rec.tiporeconocimiento }}</h6>
+                                </div>
+                                <p class="grid-item-date">
+                                    <i class="bi bi-calendar me-1"></i>{{ rec.fechareconocimiento|date:"d M Y" }}
+                                </p>
+                                <p class="grid-item-description">{{ rec.entidadpatrocinadora }}</p>
+                                {% if rec.descripcionreconocimiento %}
+                                    <p class="grid-item-description">{{ rec.descripcionreconocimiento }}</p>
+                                {% endif %}
+                                <div class="grid-item-actions">
+                                    <a href="{% url 'editar_reconocimiento' rec.id %}" class="action-btn action-btn-edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form method="POST" action="{% url 'eliminar_reconocimiento' rec.id %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="action-btn action-btn-delete" onclick="return confirm('¿Eliminar?')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Cursos y Capacitaciones -->
+                {% if cursos %}
+                <div class="content-card">
+                    <div class="card-header-custom">
+                        <h5 class="card-title">
+                            <i class="bi bi-book-fill"></i>
+                            CURSOS Y CAPACITACIONES
+                        </h5>
+                        <a href="{% url 'crear_curso' %}" class="add-btn">
+                            <i class="bi bi-plus me-1"></i>Agregar
+                        </a>
+                    </div>
+                    
+                    <div class="grid-container">
+                        {% for curso in cursos %}
+                            <div class="grid-item">
+                                <div class="grid-item-header">
+                                    <h6 class="grid-item-title">{{ curso.nombrecurso }}</h6>
+                                </div>
+                                <p class="grid-item-date">
+                                    <i class="bi bi-calendar me-1"></i>{{ curso.fechainicio|date:"M Y" }} 
+                                    {% if curso.fechafin %}- {{ curso.fechafin|date:"M Y" }}{% endif %}
+                                </p>
+                                <p class="grid-item-description">{{ curso.entidadpatrocinadora }}</p>
+                                {% if curso.totalhoras %}
+                                    <p class="grid-item-description">
+                                        <i class="bi bi-clock me-1"></i>{{ curso.totalhoras }} horas
+                                    </p>
+                                {% endif %}
+                                {% if curso.descripcioncurso %}
+                                    <p class="grid-item-description">{{ curso.descripcioncurso }}</p>
+                                {% endif %}
+                                <div class="grid-item-actions">
+                                    <a href="{% url 'editar_curso' curso.id %}" class="action-btn action-btn-edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form method="POST" action="{% url 'eliminar_curso' curso.id %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="action-btn action-btn-delete" onclick="return confirm('¿Eliminar?')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
                 <!-- Certificaciones -->
                 {% if certificaciones %}
                 <div class="content-card">
